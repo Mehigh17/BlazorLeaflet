@@ -4,7 +4,8 @@
 
 @code {
 
-    [Parameter] public Layer[] Layers { get; set; }
+    [Parameter] public ObservableCollection<Layer> Layers { get; set; }
+    [Parameter] public ObservableCollection<Marker> Markers { get; set; }
 
     private string _id;
 
@@ -16,13 +17,42 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             await LeafletInterops.Create(JsRuntime, _id);
-            foreach(var layer in Layers)
+
+            foreach (var layer in Layers)
             {
                 await LeafletInterops.AddLayer(JsRuntime, _id, layer);
             }
+
+            Markers.CollectionChanged += OnMarkersChanged;
+            foreach (var marker in Markers)
+            {
+                await LeafletInterops.AddMarker(JsRuntime, _id, marker);
+            }
+        }
+    }
+
+    private void OnMarkersChanged(object sender, NotifyCollectionChangedEventArgs args)
+    {
+        if (args.Action == NotifyCollectionChangedAction.Add)
+        {
+            foreach (var marker in args.NewItems)
+            {
+                LeafletInterops.AddMarker(JsRuntime, _id, marker as Marker);
+            }
+        }
+        else if(args.Action == NotifyCollectionChangedAction.Remove)
+        {
+            foreach(var marker in args.OldItems)
+            {
+                LeafletInterops.RemoveMarker(JsRuntime, _id, marker as Marker);
+            }
+        }
+        else if (args.Action == NotifyCollectionChangedAction.Reset)
+        {
+            LeafletInterops.ClearMarkers(JsRuntime, _id);
         }
     }
 

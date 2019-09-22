@@ -25,5 +25,20 @@ namespace BlazorLeaflet
             throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented.");
         }
 
+        public static ValueTask AddMarker(IJSRuntime jsRuntime, string elementId, Marker marker)
+        {
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", elementId, marker);
+        }
+
+        public static ValueTask RemoveMarker(IJSRuntime jsRuntime, string mapId, Marker marker)
+        {
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeMarker", mapId, marker.Id);
+        }
+
+        public static ValueTask ClearMarkers(IJSRuntime jsRuntime, string mapId)
+        {
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.clearMarkers", mapId);
+        }
+
     }
 }
