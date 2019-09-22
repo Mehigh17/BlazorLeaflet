@@ -1,0 +1,29 @@
+﻿@inject IJSRuntime JsRuntime
+
+<div id="@_id" style="width: 100%; height: 100%;"></div>
+
+@code {
+
+    [Parameter] public Layer[] Layers { get; set; }
+
+    private string _id;
+
+    protected override void OnInitialized()
+    {
+        // Generate random element identifier.
+        _id = StringHelper.GetRandomString(10);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await LeafletInterops.Create(JsRuntime, _id);
+            foreach(var layer in Layers)
+            {
+                await LeafletInterops.AddLayer(JsRuntime, _id, layer);
+            }
+        }
+    }
+
+}
