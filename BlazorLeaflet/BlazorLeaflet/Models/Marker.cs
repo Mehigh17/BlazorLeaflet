@@ -77,6 +77,11 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public int AutoPanSpeed { get; set; } = 10;
 
+        /// <summary>
+        /// The tooltip assigned to this marker.
+        /// </summary>
+        public Tooltip Tooltip { get; set; }
+
         public Marker(float x, float y) : this(new PointF(x, y))
         {
         }

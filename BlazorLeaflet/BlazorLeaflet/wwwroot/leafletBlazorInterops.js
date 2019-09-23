@@ -58,6 +58,17 @@ window.leafletBlazor = {
         const mkr = L.marker([marker.position.x, marker.position.y], options).addTo(maps[mapId]);
         mkr.id = marker.id;
 
+        if (marker.tooltip !== null) {
+            mkr.bindTooltip(marker.tooltip.content, {
+                pane: marker.tooltip.pane,
+                offset: L.point(marker.tooltip.offset.x, marker.tooltip.offset.y),
+                direction: marker.tooltip.direction,
+                permanent: marker.tooltip.isPermanent,
+                sticky: marker.tooltip.isSticky,
+                opacity: marker.tooltip.opacity
+            });
+        }
+
         markers[mapId].push(mkr);
     },
     removeMarker: function (mapId, markerId) {
