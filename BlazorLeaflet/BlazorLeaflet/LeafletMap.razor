@@ -1,58 +1,60 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@using System.Threading.Tasks
+@using Microsoft.AspNetCore.Components
+@inject IJSRuntime JsRuntime
 
-<div id="@_id" style="width: 100%; height: 100%;"></div>
+<div id="@_mapId" style="width: 100%; height: 100%;"></div>
 
 @code {
 
-    [Parameter] public ObservableCollection<Layer> Layers { get; set; }
-    [Parameter] public ObservableCollection<Marker> Markers { get; set; }
+    [Parameter] public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
 
-    private string _id;
+    private string _mapId;
 
     protected override void OnInitialized()
     {
-        // Generate random element identifier.
-        _id = StringHelper.GetRandomString(10);
+        _mapId = StringHelper.GetRandomString(10);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LeafletInterops.Create(JsRuntime, _id);
+            await LeafletInterops.Create(JsRuntime, _mapId);
 
+            Layers.CollectionChanged += OnLayersChanged;
             foreach (var layer in Layers)
             {
-                await LeafletInterops.AddLayer(JsRuntime, _id, layer);
-            }
-
-            Markers.CollectionChanged += OnMarkersChanged;
-            foreach (var marker in Markers)
-            {
-                await LeafletInterops.AddMarker(JsRuntime, _id, marker);
+                await LeafletInterops.AddLayer(JsRuntime, _mapId, layer);
             }
         }
     }
 
-    private void OnMarkersChanged(object sender, NotifyCollectionChangedEventArgs args)
+    private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
     {
         if (args.Action == NotifyCollectionChangedAction.Add)
         {
-            foreach (var marker in args.NewItems)
+            foreach (var item in args.NewItems)
+                LeafletInterops.AddLayer(JsRuntime, _mapId, item as Layer);
+        }
+        else if (args.Action == NotifyCollectionChangedAction.Remove)
+        {
+            foreach (var item in args.OldItems)
             {
-                LeafletInterops.AddMarker(JsRuntime, _id, marker as Marker);
+                if (item is Layer layer)
+                {
+                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+                }
             }
         }
-        else if(args.Action == NotifyCollectionChangedAction.Remove)
+        else if (args.Action == NotifyCollectionChangedAction.Replace
+                 || args.Action == NotifyCollectionChangedAction.Move)
         {
-            foreach(var marker in args.OldItems)
-            {
-                LeafletInterops.RemoveMarker(JsRuntime, _id, marker as Marker);
-            }
-        }
-        else if (args.Action == NotifyCollectionChangedAction.Reset)
-        {
-            LeafletInterops.ClearMarkers(JsRuntime, _id);
+            foreach (var oldItem in args.OldItems)
+                if (oldItem is Layer layer)
+                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+
+            foreach (var newItem in args.NewItems)
+                LeafletInterops.AddLayer(JsRuntime, _mapId, newItem as Layer);
         }
     }
 

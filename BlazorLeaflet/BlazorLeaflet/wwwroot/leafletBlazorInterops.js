@@ -1,5 +1,5 @@
 ﻿maps = {};
-markers = {};
+layers = {};
 
 window.leafletBlazor = {
     create: function (elementId) {
@@ -9,7 +9,7 @@ window.leafletBlazor = {
         });
 
         maps[elementId] = map;
-        markers[elementId] = [];
+        layers[elementId] = [];
     },
     addTilelayer: function (mapId, tileLayer) {
         L.tileLayer(tileLayer.urlTemplate, {
@@ -86,20 +86,14 @@ window.leafletBlazor = {
             });
         }
 
-        markers[mapId].push(mkr);
+        layers[mapId].push(mkr);
     },
-    removeMarker: function (mapId, markerId) {
-        const remainingMarkers = markers[mapId].filter((m) => m.id !== markerId);
-        const markersToBeRemoved = markers[mapId].filter((m) => m.id === markerId); // should be only one ...
-        markers[mapId] = remainingMarkers;
+    removeLayer: function (mapId, layerId) {
+        const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
+        const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...
+        layers[mapId] = remainingLayers;
 
-        markersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
-    },
-    clearMarkers: function (mapId) {
-        markers[mapId].forEach((m) => {
-            m.removeFrom(maps[mapId]);
-        });
-        markers[mapId] = [];
+        layersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
     }
 };
 

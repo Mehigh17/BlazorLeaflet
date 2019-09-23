@@ -6,8 +6,6 @@ namespace BlazorLeaflet.Models
     public class Marker : InteractiveLayer
     {
 
-        public string Id { get; }
-
         /// <summary>
         /// The position of the marker on the map.
         /// </summary>
@@ -94,7 +92,6 @@ namespace BlazorLeaflet.Models
         public Marker(PointF position)
         {
             Position = position;
-            Id = StringHelper.GetRandomString(20);
         }
 
     }

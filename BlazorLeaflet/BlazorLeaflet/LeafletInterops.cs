@@ -10,34 +10,29 @@ namespace BlazorLeaflet
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, string elementId)
+        public static ValueTask Create(IJSRuntime jsRuntime, string mapId)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", elementId);
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId);
         }
 
-        public static ValueTask AddLayer(IJSRuntime jsRuntime, string elementId, Layer layer)
+        public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer)
         {
             if(layer is TileLayer tileLayer)
             {
-                return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", elementId, tileLayer);
+                return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer);
+            }
+
+            if (layer is Marker marker)
+            {
+                return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker);
             }
 
             throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented.");
         }
 
-        public static ValueTask AddMarker(IJSRuntime jsRuntime, string elementId, Marker marker)
+        public static ValueTask RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", elementId, marker);
-        }
-
-        public static ValueTask RemoveMarker(IJSRuntime jsRuntime, string mapId, Marker marker)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeMarker", mapId, marker.Id);
-        }
-
-        public static ValueTask ClearMarkers(IJSRuntime jsRuntime, string mapId)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.clearMarkers", mapId);
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId);
         }
 
     }
