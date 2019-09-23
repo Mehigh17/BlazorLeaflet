@@ -13,7 +13,7 @@ namespace BlazorLeaflet.Models
         /// <summary>
         /// A custom CSS class name to assign to the popup.
         /// </summary>
-        public string ClassName { get; set; } = string.Empty;
+        public virtual string ClassName { get; set; } = string.Empty;
 
         /// <summary>
         /// Map pane where the popup will be added.

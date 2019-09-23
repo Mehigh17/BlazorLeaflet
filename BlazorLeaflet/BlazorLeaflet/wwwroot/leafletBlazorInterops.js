@@ -69,6 +69,23 @@ window.leafletBlazor = {
             });
         }
 
+        if (marker.popup !== null) {
+            mkr.bindPopup(marker.popup.content, {
+                pane: marker.popup.pane,
+                className: marker.popup.className,
+                maxWidth: marker.popup.maximumWidth,
+                minWidth: marker.popup.minimumWidth,
+                autoPan: marker.popup.autoPanEnabled,
+                autoPanPaddingTopLeft: marker.popup.autoPanPaddingTopLeft ? L.point(marker.popup.autoPanPaddingTopLeft.x, marker.popup.autoPanPaddingTopLeft.y) : null,
+                autoPanPaddingBottomRight: marker.popup.autoPanPaddingBottomRight ? L.point(marker.popup.autoPanPaddingBottomRight.x, marker.popup.autoPanPaddingBottomRight.y) : null,
+                autoPanPadding: L.point(marker.popup.autoPanPadding.x, marker.popup.autoPanPadding.y),
+                keepInView: marker.popup.keepInView,
+                closeButton: marker.popup.showCloseButton,
+                autoClose: marker.popup.autoClose,
+                closeOnEscapeKey: marker.popup.closeOnEscapeKey,
+            });
+        }
+
         markers[mapId].push(mkr);
     },
     removeMarker: function (mapId, markerId) {

@@ -82,6 +82,11 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public Tooltip Tooltip { get; set; }
 
+        /// <summary>
+        /// The popup shown when the marker is clicked.
+        /// </summary>
+        public Popup Popup { get; set; }
+
         public Marker(float x, float y) : this(new PointF(x, y))
         {
         }
