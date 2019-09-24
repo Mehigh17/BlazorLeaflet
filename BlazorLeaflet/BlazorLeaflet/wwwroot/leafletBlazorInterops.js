@@ -2,17 +2,17 @@
 layers = {};
 
 window.leafletBlazor = {
-    create: function (elementId) {
-        var map = L.map(elementId, {
-            center: [0.0, 0.0],
-            zoom: 13
+    create: function (mapId, initPosition, initZoom) {
+        var map = L.map(mapId, {
+            center: [initPosition.x, initPosition.y],
+            zoom: initZoom
         });
 
-        maps[elementId] = map;
-        layers[elementId] = [];
+        maps[mapId] = map;
+        layers[mapId] = [];
     },
     addTilelayer: function (mapId, tileLayer) {
-        L.tileLayer(tileLayer.urlTemplate, {
+        const layer = L.tileLayer(tileLayer.urlTemplate, {
             attribution: tileLayer.attribution,
             pane: tileLayer.pane,
             // ---
@@ -32,7 +32,8 @@ window.leafletBlazor = {
             zoomReverse: tileLayer.isZoomReversed,
             detectRetina: tileLayer.detectRetina,
             // crossOrigin
-        }).addTo(maps[mapId]);
+        });
+        layer.addTo(maps[mapId]);
     },
     addMarker: function (mapId, marker) {
         var options = {
@@ -98,10 +99,11 @@ window.leafletBlazor = {
 };
 
 function createIcon(icon) {
+    console.log(icon);
     return L.icon({
         iconUrl: icon.url,
         iconRetinaUrl: icon.retinaUrl,
-        iconSize: icon.size ? L.point(icon.size.width, icon.size.height) : null,
+        iconSize: icon.size ? L.point(icon.size.value.width, icon.size.value.height) : null,
         iconAnchor: icon.anchor ? L.point(icon.anchor.x, icon.anchor.y) : null,
         popupAnchor: L.point(icon.popupAnchor.x, icon.popupAnchor.y),
         tooltipAnchor: L.point(icon.tooltipAnchor.x, icon.tooltipAnchor.y),
