@@ -1,0 +1,65 @@
+﻿@using System.Drawing
+@using System.Threading.Tasks
+@using Microsoft.AspNetCore.Components
+@inject IJSRuntime JsRuntime
+
+<div id="@_mapId" style="width: 100%; height: 100%;"></div>
+
+@code {
+
+    [Parameter] public PointF InitialPosition { get; set; } = PointF.Empty;
+    [Parameter] public float InitialZoom { get; set; } = 13f;
+
+    [Parameter] public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
+
+    private string _mapId;
+
+    protected override void OnInitialized()
+    {
+        _mapId = StringHelper.GetRandomString(10);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LeafletInterops.Create(JsRuntime, _mapId, InitialPosition, InitialZoom);
+
+            Layers.CollectionChanged += OnLayersChanged;
+            foreach (var layer in Layers)
+            {
+                await LeafletInterops.AddLayer(JsRuntime, _mapId, layer);
+            }
+        }
+    }
+
+    private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
+    {
+        if (args.Action == NotifyCollectionChangedAction.Add)
+        {
+            foreach (var item in args.NewItems)
+                LeafletInterops.AddLayer(JsRuntime, _mapId, item as Layer);
+        }
+        else if (args.Action == NotifyCollectionChangedAction.Remove)
+        {
+            foreach (var item in args.OldItems)
+            {
+                if (item is Layer layer)
+                {
+                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+                }
+            }
+        }
+        else if (args.Action == NotifyCollectionChangedAction.Replace
+                 || args.Action == NotifyCollectionChangedAction.Move)
+        {
+            foreach (var oldItem in args.OldItems)
+                if (oldItem is Layer layer)
+                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+
+            foreach (var newItem in args.NewItems)
+                LeafletInterops.AddLayer(JsRuntime, _mapId, newItem as Layer);
+        }
+    }
+
+}

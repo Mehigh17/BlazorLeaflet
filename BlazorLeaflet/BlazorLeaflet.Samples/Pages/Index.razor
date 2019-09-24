@@ -1,5 +1,63 @@
 ﻿@page "/"
+@using System.Collections.ObjectModel
+@using System.Drawing
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Samples.Data
+@inject CityService cityService
 
-<h1>Hello, world!</h1>
+<h1>Blazor Leaflet</h1>
 
-Welcome to your new app.
+<div class="form-inline m-2">
+    <div class="form-group mb-2">
+        <label>Tell me more about </label>
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName"/>
+    </div>
+    <button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
+</div>
+
+<div style="height: 500px; width: 500px;">
+    <LeafletMap Layers="_layers" InitialPosition="_startAt" InitialZoom="4.8f" />
+</div>
+
+@code
+{
+
+    private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
+    public string CityName { get; set; }
+
+    private ObservableCollection<Layer> _layers = new ObservableCollection<Layer>
+    {
+        new TileLayer
+        {
+            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+        }
+    };
+
+    private void FindCity()
+    {
+        var city = cityService.FindCity(CityName);
+        if(city != null)
+        {
+            var marker = new Marker(city.Coordinates)
+            {
+                Icon = new Icon
+                {
+                    Url = city.CoatOfArmsImageUrl,
+                    ClassName = "map-icon",
+                },
+                Tooltip = new Tooltip
+                {
+                    Content = city.Name,
+                },
+                Popup = new Popup
+                {
+                    Content = city.Description,
+                }
+            };
+
+            _layers.Add(marker);
+        }
+    }
+
+}
