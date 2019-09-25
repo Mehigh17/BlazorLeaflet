@@ -1,9 +1,11 @@
-﻿namespace BlazorLeaflet.Models
+﻿using System.Drawing;
+
+namespace BlazorLeaflet.Models
 {
-    public class Polyline : Path
+    public class Polyline<TShape> : Path
     {
 
-        public double[][] Shape { get; set; }
+        public TShape Shape { get; set; }
 
         /// <summary>
         /// How much to simplify the polyline on each zoom level. More means better performance and smoother look, and less means more accurate representation.
@@ -16,4 +18,9 @@
         public bool NoClipEnabled { get; set; }
 
     }
+
+    public class Polyline : Polyline<PointF[][]>
+    { }
+
+
 }

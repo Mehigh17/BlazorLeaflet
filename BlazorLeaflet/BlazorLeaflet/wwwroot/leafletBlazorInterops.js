@@ -37,6 +37,7 @@ window.leafletBlazor = {
     },
     addMarker: function (mapId, marker) {
         var options = {
+            ...createInteractiveLayer(marker),
             keyboard: marker.isKeyboardAccessible,
             title: marker.title,
             alt: marker.alt,
@@ -59,35 +60,76 @@ window.leafletBlazor = {
         const mkr = L.marker([marker.position.x, marker.position.y], options).addTo(maps[mapId]);
         mkr.id = marker.id;
 
-        if (marker.tooltip !== null) {
-            mkr.bindTooltip(marker.tooltip.content, {
-                pane: marker.tooltip.pane,
-                offset: L.point(marker.tooltip.offset.x, marker.tooltip.offset.y),
-                direction: marker.tooltip.direction,
-                permanent: marker.tooltip.isPermanent,
-                sticky: marker.tooltip.isSticky,
-                opacity: marker.tooltip.opacity
-            });
+        if (marker.tooltip) {
+            addTooltip(mkr, marker.tooltip);
         }
 
-        if (marker.popup !== null) {
-            mkr.bindPopup(marker.popup.content, {
-                pane: marker.popup.pane,
-                className: marker.popup.className,
-                maxWidth: marker.popup.maximumWidth,
-                minWidth: marker.popup.minimumWidth,
-                autoPan: marker.popup.autoPanEnabled,
-                autoPanPaddingTopLeft: marker.popup.autoPanPaddingTopLeft ? L.point(marker.popup.autoPanPaddingTopLeft.x, marker.popup.autoPanPaddingTopLeft.y) : null,
-                autoPanPaddingBottomRight: marker.popup.autoPanPaddingBottomRight ? L.point(marker.popup.autoPanPaddingBottomRight.x, marker.popup.autoPanPaddingBottomRight.y) : null,
-                autoPanPadding: L.point(marker.popup.autoPanPadding.x, marker.popup.autoPanPadding.y),
-                keepInView: marker.popup.keepInView,
-                closeButton: marker.popup.showCloseButton,
-                autoClose: marker.popup.autoClose,
-                closeOnEscapeKey: marker.popup.closeOnEscapeKey,
-            });
+        if (marker.popup) {
+            addPopup(mkr, marker.popup);
         }
 
         layers[mapId].push(mkr);
+    },
+    addPolyline: function (mapId, polyline) {
+        const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (polyline.tooltip) {
+            addTooltip(layer, polyline.tooltip);
+        }
+
+        if (polyline.popup) {
+            addPopup(layer, polyline.popup);
+        }
+    },
+    addPolygon: function (mapId, polygon) {
+        const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (polygon.tooltip) {
+            addTooltip(layer, polygon.tooltip);
+        }
+
+        if (polygon.popup) {
+            addPopup(layer, polygon.popup);
+        }
+    },
+    addRectangle: function (mapId, rectangle) {
+        const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (rectangle.tooltip) {
+            addTooltip(layer, rectangle.tooltip);
+        }
+
+        if (rectangle.popup) {
+            addPopup(layer, rectangle.popup);
+        }
+    },
+    addCircle: function (mapId, circle) {
+        console.log(circle);
+        const layer = L.circle([circle.position.x, circle.position.y],
+            {
+                ...createPath(circle),
+                radius: circle.radius
+            });
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (circle.tooltip) {
+            addTooltip(layer, circle.tooltip);
+        }
+
+        if (circle.popup) {
+            addPopup(layer, circle.popup);
+        }
     },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
@@ -99,7 +141,6 @@ window.leafletBlazor = {
 };
 
 function createIcon(icon) {
-    console.log(icon);
     return L.icon({
         iconUrl: icon.url,
         iconRetinaUrl: icon.retinaUrl,
@@ -113,4 +154,90 @@ function createIcon(icon) {
         shadowSizeAnchor: icon.shadowSizeAnchor ? L.point(icon.shadowSizeAnchor.width, icon.shadowSizeAnchor.height) : null,
         className: icon.className
     })
+}
+
+function shapeToLatLngArray(shape) {
+    var latlngs = [];
+    shape.forEach(pts => {
+        var ll = [];
+        pts.forEach(p => ll.push([p.x, p.y]));
+        latlngs.push(ll);
+    });
+
+    return latlngs;
+}
+
+function createPolyline(polyline) {
+    return {
+        ...createPath(polyline),
+        smoothFactor: polyline.smoothFactor,
+        noClip: polyline.noClipEnabled
+    };
+}
+
+function createPath(path) {
+    return {
+        ...createInteractiveLayer(path),
+        stroke: path.drawStroke,
+        color: getColorString(path.strokeColor),
+        weight: path.strokeWidth,
+        opacity: path.strokeOpacity,
+        lineCap: path.lineCap,
+        lineJoin: path.lineJoin,
+        dashArray: path.strokeDashArray,
+        dashOffset: path.strokeDashOffset,
+        fill: path.fill,
+        fillColor: getColorString(path.fillColor),
+        fillOpacity: path.fillOpacity,
+        fillRule: path.fillRule
+    };
+}
+
+function createInteractiveLayer(layer) {
+    return {
+        ...createLayer(layer),
+        interactive: layer.isInteractive,
+        bubblingMouseEvents: layer.isBubblingMouseEvents
+    };
+}
+
+function createLayer(obj) {
+    return {
+        id: obj.id,
+        pane: obj.pane,
+        attribution: obj.attribution
+    };
+}
+
+function getColorString(color) {
+    return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+}
+
+function addTooltip(layerObj, tooltip) {
+    layerObj.bindTooltip(tooltip.content,
+        {
+            pane: tooltip.pane,
+            offset: L.point(tooltip.offset.x, tooltip.offset.y),
+            direction: tooltip.direction,
+            permanent: tooltip.isPermanent,
+            sticky: tooltip.isSticky,
+            opacity: tooltip.opacity
+        });
+}
+
+function addPopup(layerObj, popup) {
+    layerObj.bindPopup(popup.content, {
+        pane: popup.pane,
+        className: popup.className,
+        maxWidth: popup.maximumWidth,
+        minWidth: popup.minimumWidth,
+        autoPan: popup.autoPanEnabled,
+        autoPanPaddingTopLeft: popup.autoPanPaddingTopLeft ? L.point(popup.autoPanPaddingTopLeft.x, popup.autoPanPaddingTopLeft.y) : null,
+        autoPanPaddingBottomRight: popup.autoPanPaddingBottomRight ? L.point(popup.autoPanPaddingBottomRight.x, popup.autoPanPaddingBottomRight.y) : null,
+        autoPanPadding: L.point(popup.autoPanPadding.x, popup.autoPanPadding.y),
+        keepInView: popup.keepInView,
+        closeButton: popup.showCloseButton,
+        autoClose: popup.autoClose,
+        closeOnEscapeKey: popup.closeOnEscapeKey,
+    });
 }

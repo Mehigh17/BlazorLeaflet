@@ -9,7 +9,7 @@
     /// </code>
     /// </example>
     /// </summary>
-    public class Rectangle : Polygon
+    public class Rectangle : Polyline<System.Drawing.RectangleF>
     {
     }
 }

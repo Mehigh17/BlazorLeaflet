@@ -20,6 +20,16 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public string Attribution { get; set; }
 
+        /// <summary>
+        /// The tooltip assigned to this marker.
+        /// </summary>
+        public Tooltip Tooltip { get; set; }
+
+        /// <summary>
+        /// The popup shown when the marker is clicked.
+        /// </summary>
+        public Popup Popup { get; set; }
+
         protected Layer()
         {
             Id = StringHelper.GetRandomString(20);
