@@ -1,4 +1,4 @@
-﻿maps = {};
+maps = {};
 layers = {};
 
 window.leafletBlazor = {
@@ -113,4 +113,53 @@ function createIcon(icon) {
         shadowSizeAnchor: icon.shadowSizeAnchor ? L.point(icon.shadowSizeAnchor.width, icon.shadowSizeAnchor.height) : null,
         className: icon.className
     })
+}
+
+function shapeToLatLngArray(shape) {
+    var latlngs = [];
+    shape.forEach(pts => {
+        var ll = [];
+        pts.forEach(p => ll.push([p.x, p.y]));
+        latlngs.push(ll);
+    });
+
+    return latlngs;
+}
+
+function createPath(path) {
+    return {
+        ...createInteractiveLayer(path),
+        stroke: path.drawStroke,
+        color: getColorString(path.strokeColor),
+        weight: path.strokeWidth,
+        opacity: path.strokeOpacity,
+        lineCap: path.lineCap,
+        lineJoin: path.lineJoin,
+        dashArray: path.strokeDashArray,
+        dashOffset: path.strokeDashOffset,
+        fill: path.fill,
+        fillColor: getColorString(path.fillColor),
+        fillOpacity: path.fillOpacity,
+        fillRule: path.fillRule
+    };
+}
+
+function createInteractiveLayer(layer) {
+    return {
+        ...createLayer(layer),
+        interactive: layer.isInteractive,
+        bubblingMouseEvents: layer.isBubblingMouseEvents
+    };
+}
+
+function createLayer(layer) {
+    return {
+        id: layer.id,
+        pane: layer.pane,
+        attribution: layer.attribution
+    };
+}
+
+function getColorString(color) {
+    return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
 }
