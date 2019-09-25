@@ -98,6 +98,21 @@ window.leafletBlazor = {
             addPopup(layer, polygon.popup);
         }
     },
+    addRectangle: function (mapId, rectangle) {
+        console.log(rectangle);
+        const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (rectangle.tooltip) {
+            addTooltip(layer, rectangle.tooltip);
+        }
+
+        if (rectangle.popup) {
+            addPopup(layer, rectangle.popup);
+        }
+    },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
         const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...

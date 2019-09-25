@@ -1,8 +1,6 @@
 ﻿using BlazorLeaflet.Models;
 using Microsoft.JSInterop;
 using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace BlazorLeaflet
@@ -12,7 +10,7 @@ namespace BlazorLeaflet
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, string mapId, PointF initCenterPosition, float initialZoom)
+        public static ValueTask Create(IJSRuntime jsRuntime, string mapId, System.Drawing.PointF initCenterPosition, float initialZoom)
         {
             return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId, initCenterPosition, initialZoom);
         }
@@ -22,6 +20,7 @@ namespace BlazorLeaflet
             {
                 TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer),
                 Marker marker => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker),
+                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addRectangle", mapId, rectangle),
                 Polygon polygon => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolygon", mapId, polygon),
                 Polyline polyline => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolyline", mapId, polyline),
                 _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
