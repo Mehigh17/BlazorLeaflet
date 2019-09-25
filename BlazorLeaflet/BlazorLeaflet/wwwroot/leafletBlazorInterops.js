@@ -99,7 +99,6 @@ window.leafletBlazor = {
         }
     },
     addRectangle: function (mapId, rectangle) {
-        console.log(rectangle);
         const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
 
         layers[mapId].push(layer);
@@ -111,6 +110,25 @@ window.leafletBlazor = {
 
         if (rectangle.popup) {
             addPopup(layer, rectangle.popup);
+        }
+    },
+    addCircle: function (mapId, circle) {
+        console.log(circle);
+        const layer = L.circle([circle.position.x, circle.position.y],
+            {
+                ...createPath(circle),
+                radius: circle.radius
+            });
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (circle.tooltip) {
+            addTooltip(layer, circle.tooltip);
+        }
+
+        if (circle.popup) {
+            addPopup(layer, circle.popup);
         }
     },
     removeLayer: function (mapId, layerId) {
