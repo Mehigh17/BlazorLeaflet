@@ -28,6 +28,11 @@ namespace BlazorLeaflet
                 return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker);
             }
 
+            if (layer is Polyline polyline)
+            {
+                return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolyline", mapId, polyline);
+            }
+
             throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented.");
         }
 

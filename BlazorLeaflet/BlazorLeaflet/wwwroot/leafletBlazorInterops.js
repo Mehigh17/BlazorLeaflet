@@ -1,4 +1,4 @@
-maps = {};
+﻿maps = {};
 layers = {};
 
 window.leafletBlazor = {
@@ -37,6 +37,7 @@ window.leafletBlazor = {
     },
     addMarker: function (mapId, marker) {
         var options = {
+            ...createInteractiveLayer(marker),
             keyboard: marker.isKeyboardAccessible,
             title: marker.title,
             alt: marker.alt,
@@ -69,18 +70,24 @@ window.leafletBlazor = {
 
         layers[mapId].push(mkr);
     },
-                autoPan: marker.popup.autoPanEnabled,
-                autoPanPaddingTopLeft: marker.popup.autoPanPaddingTopLeft ? L.point(marker.popup.autoPanPaddingTopLeft.x, marker.popup.autoPanPaddingTopLeft.y) : null,
-                autoPanPaddingBottomRight: marker.popup.autoPanPaddingBottomRight ? L.point(marker.popup.autoPanPaddingBottomRight.x, marker.popup.autoPanPaddingBottomRight.y) : null,
-                autoPanPadding: L.point(marker.popup.autoPanPadding.x, marker.popup.autoPanPadding.y),
-                keepInView: marker.popup.keepInView,
-                closeButton: marker.popup.showCloseButton,
-                autoClose: marker.popup.autoClose,
-                closeOnEscapeKey: marker.popup.closeOnEscapeKey,
+    addPolyline: function (mapId, polyline) {
+        const layer = L.polyline(shapeToLatLngArray(polyline.shape),
+            {
+                ...createPath(polyline),
+                smoothFactor: polyline.smoothFactor,
+                noClip: polyline.noClipEnabled
             });
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (polyline.tooltip) {
+            addTooltip(layer, polyline.tooltip);
         }
 
-        layers[mapId].push(mkr);
+        if (polyline.popup) {
+            addPopup(layer, polyline.popup);
+        }
     },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
@@ -92,7 +99,6 @@ window.leafletBlazor = {
 };
 
 function createIcon(icon) {
-    console.log(icon);
     return L.icon({
         iconUrl: icon.url,
         iconRetinaUrl: icon.retinaUrl,
