@@ -71,12 +71,7 @@ window.leafletBlazor = {
         layers[mapId].push(mkr);
     },
     addPolyline: function (mapId, polyline) {
-        const layer = L.polyline(shapeToLatLngArray(polyline.shape),
-            {
-                ...createPath(polyline),
-                smoothFactor: polyline.smoothFactor,
-                noClip: polyline.noClipEnabled
-            });
+        const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
 
         layers[mapId].push(layer);
         layer.addTo(maps[mapId]);
@@ -87,6 +82,20 @@ window.leafletBlazor = {
 
         if (polyline.popup) {
             addPopup(layer, polyline.popup);
+        }
+    },
+    addPolygon: function (mapId, polygon) {
+        const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
+
+        layers[mapId].push(layer);
+        layer.addTo(maps[mapId]);
+
+        if (polygon.tooltip) {
+            addTooltip(layer, polygon.tooltip);
+        }
+
+        if (polygon.popup) {
+            addPopup(layer, polygon.popup);
         }
     },
     removeLayer: function (mapId, layerId) {
@@ -123,6 +132,14 @@ function shapeToLatLngArray(shape) {
     });
 
     return latlngs;
+}
+
+function createPolyline(polyline) {
+    return {
+        ...createPath(polyline),
+        smoothFactor: polyline.smoothFactor,
+        noClip: polyline.noClipEnabled
+    };
 }
 
 function createPath(path) {
