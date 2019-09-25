@@ -14,6 +14,7 @@
     <PackageTags>blazor, leaflet, c#, js, interop</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression></PackageLicenseExpression>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
 
