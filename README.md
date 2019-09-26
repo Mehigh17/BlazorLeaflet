@@ -49,4 +49,28 @@ private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
 private ObservableCollection<Layer> _layers = // etc...
 ```
 
+Add a marker with a tooltip and an icon
+
+```cs
+// Create the marker
+var marker = new Marker(0.23f, 32f);
+marker.Tooltip = new Tooltip { Content = "This is a nice location!" };
+marker.Icon = new Icon { Url = "... some url" };
+
+// Add it to the layers collection
+_layers.Add(marker);
+```
+
+Or add a rectangle that highlights a zone
+
+```cs
+var rect = new Rectangle { Shape = new RectangleF(21f, 20f, 10f, 20f) };
+rect.Fill = true; // This will fill the rectangle with a color
+rect.FillColor = Color.Red; // Make the filled area red
+rect.Popup = new Popup { Content = "This is a restricted area!" }; // Create a popup when the area is clicked
+
+// Add it to the layers collection
+_layers.Add(rect);
+```
+
 Storing the layers in an ObservableCollection will automatically update the map as soon as the collection changed.
