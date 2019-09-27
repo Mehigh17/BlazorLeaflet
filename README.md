@@ -10,7 +10,7 @@
 
 # Description
 
-BlazorLeaflet is a wrapper offering easy-to-use Blazor components that expose the <a href="https://leafletjs.com/">Leaflet API</a> in C#.
+BlazorLeaflet is a wrapper offering easy-to-use Blazor components that expose the <a href="https://leafletjs.com/">Leaflet API</a> in C#. It allows you to create easily customizable maps without getting outside your existing .NET ecosystem.
 
 The wrapper is still in its early days so it's very lackluster and doesn't expose the entirety of leaflet's API.
 
@@ -39,7 +39,10 @@ You can now use the components and the rest of the library.
 Create the map
 
 ```html
-<LeafletMap Layers="_layers" InitialPosition="_startAt" InitialZoom="4.8f" />
+<!-- You must wrap the map component in a container setting its actual size. -->
+<div id="mapContainer" style="width: 300px; height: 300px;">
+    <LeafletMap Layers="_layers" InitialPosition="_startAt" InitialZoom="4.8f" />
+</div>
 ```
 
 Bind the parameters to the respective objects
