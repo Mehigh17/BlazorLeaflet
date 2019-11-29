@@ -15,6 +15,7 @@
     </div>
     <button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
     <button class="btn btn-primary mb-2" @onclick="ZoomMap">Zoom</button>
+    <button class="btn btn-primary mb-2" @onclick="PanToNY">Pan to New York</button>
 </div>
 
 <div style="height: 500px; width: 500px;">
@@ -101,6 +102,11 @@
     private void ZoomMap()
     {
         _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f));
+    }
+
+    private void PanToNY()
+    {
+        _map.PanTo(new PointF(40.713185f, -74.0072333f), animate: true, duration: 10f);
     }
 
 }
