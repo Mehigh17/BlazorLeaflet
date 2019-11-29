@@ -3,32 +3,25 @@
 @using Microsoft.AspNetCore.Components
 @inject IJSRuntime JsRuntime
 
-<div id="@_mapId" style="width: 100%; height: 100%;"></div>
+<div id="@Map.Id" style="width: 100%; height: 100%;"></div>
 
 @code {
 
+    [Parameter] public Map Map { get; set; }
     [Parameter] public PointF InitialPosition { get; set; } = PointF.Empty;
     [Parameter] public float InitialZoom { get; set; } = 13f;
 
-    [Parameter] public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
-
-    private string _mapId;
-
-    protected override void OnInitialized()
-    {
-        _mapId = StringHelper.GetRandomString(10);
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LeafletInterops.Create(JsRuntime, _mapId, InitialPosition, InitialZoom);
+            await LeafletInterops.Create(JsRuntime, Map.Id, InitialPosition, InitialZoom);
 
-            Layers.CollectionChanged += OnLayersChanged;
-            foreach (var layer in Layers)
+            Map.Layers.CollectionChanged += OnLayersChanged;
+            foreach (var layer in Map.Layers)
             {
-                await LeafletInterops.AddLayer(JsRuntime, _mapId, layer);
+                await LeafletInterops.AddLayer(JsRuntime, Map.Id, layer);
             }
         }
     }
@@ -38,7 +31,7 @@
         if (args.Action == NotifyCollectionChangedAction.Add)
         {
             foreach (var item in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, _mapId, item as Layer);
+                LeafletInterops.AddLayer(JsRuntime, Map.Id, item as Layer);
         }
         else if (args.Action == NotifyCollectionChangedAction.Remove)
         {
@@ -46,7 +39,7 @@
             {
                 if (item is Layer layer)
                 {
-                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
                 }
             }
         }
@@ -55,10 +48,10 @@
         {
             foreach (var oldItem in args.OldItems)
                 if (oldItem is Layer layer)
-                    LeafletInterops.RemoveLayer(JsRuntime, _mapId, layer.Id);
+                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
 
             foreach (var newItem in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, _mapId, newItem as Layer);
+                LeafletInterops.AddLayer(JsRuntime, Map.Id, newItem as Layer);
         }
     }
 
