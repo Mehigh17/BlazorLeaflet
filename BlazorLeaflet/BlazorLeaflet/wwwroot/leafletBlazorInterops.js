@@ -137,11 +137,15 @@ window.leafletBlazor = {
 
         layersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
     },
-    fitBounds: function (mapId, corner1, corner2) {
+    fitBounds: function (mapId, corner1, corner2, padding, maxZoom) {
+        console.log(padding, maxZoom);
         const corner1LL = L.latLng(corner1.x, corner1.y);
         const corner2LL = L.latLng(corner2.x, corner2.y);
         const mapBounds = L.latLngBounds(corner1LL, corner2LL);
-        maps[mapId].fitBounds(mapBounds);
+        maps[mapId].fitBounds(mapBounds, {
+            padding: padding == null ? null : L.point(padding.x, padding.y),
+            maxZoom: maxZoom
+        });
     },
     panTo: function (mapId, position, animate, duration, easeLinearity, noMoveStart) {
         const pos = L.latLng(position.x, position.y);

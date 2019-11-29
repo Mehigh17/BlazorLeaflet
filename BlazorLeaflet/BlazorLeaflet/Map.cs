@@ -21,9 +21,9 @@ namespace BlazorLeaflet
             Id = StringHelper.GetRandomString(10);
         }
 
-        public void FitBounds(PointF corner1, PointF corner2)
+        public void FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null)
         {
-            LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2);
+            LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2, padding, maxZoom);
         }
         
         public void PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false)
