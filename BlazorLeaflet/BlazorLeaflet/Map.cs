@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using BlazorLeaflet.Models;
 using BlazorLeaflet.Utils;
 using System.Collections.ObjectModel;
@@ -9,9 +9,9 @@ namespace BlazorLeaflet
 {
     public class Map
     {
-        
+
         public string Id { get; }
-        public ObservableCollection<Layer> Layers => new ObservableCollection<Layer>();
+        public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
 
         private readonly IJSRuntime _jsRuntime;
 
@@ -21,6 +21,10 @@ namespace BlazorLeaflet
             Id = StringHelper.GetRandomString(10);
         }
 
+        public void FitBounds(PointF corner1, PointF corner2)
+        {
+            LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2);
+        }
 
     }
 }

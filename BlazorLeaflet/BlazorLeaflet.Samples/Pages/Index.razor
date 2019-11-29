@@ -1,4 +1,4 @@
-@page "/"
+﻿@page "/"
 @using System.Collections.ObjectModel
 @using System.Drawing
 @using BlazorLeaflet.Models
@@ -14,6 +14,7 @@
         <input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName" />
     </div>
     <button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
+    <button class="btn btn-primary mb-2" @onclick="ZoomMap">Zoom</button>
 </div>
 
 <div style="height: 500px; width: 500px;">
@@ -65,7 +66,7 @@
             Position = new PointF(10f, 5f),
             Radius = 10f
         });
-        }
+    }
 
     private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
     public string CityName { get; set; }
@@ -95,7 +96,11 @@
 
             _map.Layers.Add(marker);
         }
-        }
+    }
+
+    private void ZoomMap()
+    {
+        _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f));
     }
 
 }

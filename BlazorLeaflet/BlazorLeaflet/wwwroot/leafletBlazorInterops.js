@@ -113,7 +113,6 @@ window.leafletBlazor = {
         }
     },
     addCircle: function (mapId, circle) {
-        console.log(circle);
         const layer = L.circle([circle.position.x, circle.position.y],
             {
                 ...createPath(circle),
@@ -137,6 +136,13 @@ window.leafletBlazor = {
         layers[mapId] = remainingLayers;
 
         layersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
+    },
+    fitBounds: function (mapId, corner1, corner2) {
+        console.log(corner1);
+        const corner1LL = L.latLng(corner1.x, corner1.y);
+        const corner2LL = L.latLng(corner2.x, corner2.y);
+        const mapBounds = L.latLngBounds(corner1LL, corner2LL);
+        maps[mapId].fitBounds(mapBounds);
     }
 };
 
