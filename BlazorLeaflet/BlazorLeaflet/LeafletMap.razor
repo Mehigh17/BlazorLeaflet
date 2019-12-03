@@ -19,7 +19,7 @@
             await LeafletInterops.Create(JsRuntime, Map.Id, InitialPosition, InitialZoom);
 
             Map.Layers.CollectionChanged += OnLayersChanged;
-            foreach (var layer in Map.Layers)
+            foreach (var layer in Map.Layers.ToList())
             {
                 await LeafletInterops.AddLayer(JsRuntime, Map.Id, layer);
             }
