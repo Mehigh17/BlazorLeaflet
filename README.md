@@ -41,15 +41,15 @@ Create the map
 ```html
 <!-- You must wrap the map component in a container setting its actual size. -->
 <div id="mapContainer" style="width: 300px; height: 300px;">
-    <LeafletMap Layers="_layers" InitialPosition="_startAt" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
 </div>
 ```
 
-Bind the parameters to the respective objects
+Bind the parameters to the respective objects like so
 
 ```cs
+private Map _map = new Map(jsRuntime);
 private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
-private ObservableCollection<Layer> _layers = // etc...
 ```
 
 Add a marker with a tooltip and an icon
@@ -61,19 +61,23 @@ marker.Tooltip = new Tooltip { Content = "This is a nice location!" };
 marker.Icon = new Icon { Url = "... some url" };
 
 // Add it to the layers collection
-_layers.Add(marker);
+_map.Layers.Add(marker);
 ```
 
 Or add a rectangle that highlights a zone
 
 ```cs
-var rect = new Rectangle { Shape = new RectangleF(21f, 20f, 10f, 20f) };
+var rect = new Rectangle { Shape = new RectangleF(21f, 20f, 10f, 20f) };
 rect.Fill = true; // This will fill the rectangle with a color
 rect.FillColor = Color.Red; // Make the filled area red
 rect.Popup = new Popup { Content = "This is a restricted area!" }; // Create a popup when the area is clicked
 
 // Add it to the layers collection
-_layers.Add(rect);
+_map.Layers.Add(rect);
 ```
 
-Storing the layers in an ObservableCollection will automatically update the map as soon as the collection changed.
+Or fit bounds on certain corners
+
+```cs
+_map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZoom: 5f);
+```

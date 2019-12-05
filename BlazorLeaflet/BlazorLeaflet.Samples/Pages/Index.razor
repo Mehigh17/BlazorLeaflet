@@ -4,40 +4,79 @@
 @using BlazorLeaflet.Models
 @using BlazorLeaflet.Samples.Data
 @inject CityService cityService
+@inject IJSRuntime jsRuntime
 
 <h1>Blazor Leaflet</h1>
 
 <div class="form-inline m-2">
     <div class="form-group mb-2">
         <label>Tell me more about </label>
-        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName"/>
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName" />
     </div>
     <button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
+    <button class="btn btn-primary mb-2" @onclick="ZoomMap">Zoom</button>
+    <button class="btn btn-primary mb-2" @onclick="PanToNY">Pan to New York</button>
 </div>
 
 <div style="height: 500px; width: 500px;">
-    <LeafletMap Layers="_layers" InitialPosition="_startAt" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
 </div>
 
 @code
 {
 
-    private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
-    public string CityName { get; set; }
+    private Map _map;
 
-    private ObservableCollection<Layer> _layers = new ObservableCollection<Layer>
+    protected override void OnInitialized()
     {
-        new TileLayer
+        _map = new Map(jsRuntime);
+
+        _map.Layers.Add(new TileLayer
         {
             UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
             Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-        }
-    };
+        });
+
+        _map.Layers.Add(new Polygon
+        {
+            Shape = new[]
+            {
+                new[]
+                {
+                    new PointF(37f, -109.05f),
+                    new PointF(41f, -109.03f),
+                    new PointF(41f, -102.05f),
+                    new PointF(37f, -102.04f)
+                }
+            },
+            Fill = true,
+            FillColor = Color.Blue,
+            Popup = new Popup
+            {
+                Content = "How are you doing,"
+            }
+        });
+
+        _map.Layers.Add(new Models.Rectangle
+        {
+            Shape = new RectangleF(10f, 0f, 5f, 1f)
+        });
+
+        _map.Layers.Add(new Circle
+        {
+            Position = new PointF(10f, 5f),
+            Radius = 10f
+        });
+    }
+
+    private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
+    public string CityName { get; set; }
+
 
     private void FindCity()
     {
         var city = cityService.FindCity(CityName);
-        if(city != null)
+        if (city != null)
         {
             var marker = new Marker(city.Coordinates)
             {
@@ -56,8 +95,18 @@
                 }
             };
 
-            _layers.Add(marker);
+            _map.Layers.Add(marker);
         }
+    }
+
+    private void ZoomMap()
+    {
+        _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZoom: 5f);
+    }
+
+    private void PanToNY()
+    {
+        _map.PanTo(new PointF(40.713185f, -74.0072333f), animate: true, duration: 10f);
     }
 
 }

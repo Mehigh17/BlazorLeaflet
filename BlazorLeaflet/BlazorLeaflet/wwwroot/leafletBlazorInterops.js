@@ -113,7 +113,6 @@ window.leafletBlazor = {
         }
     },
     addCircle: function (mapId, circle) {
-        console.log(circle);
         const layer = L.circle([circle.position.x, circle.position.y],
             {
                 ...createPath(circle),
@@ -131,12 +130,49 @@ window.leafletBlazor = {
             addPopup(layer, circle.popup);
         }
     },
+    addImageLayer: function(mapId, image) {
+        const layerOptions = {
+            ...createInteractiveLayer(image),
+            opacity: image.opacity,
+            alt: image.alt,
+            crossOrigin: image.crossOrigin,
+            errorOverlayUrl: image.errorOverlayUrl,
+            zIndex: image.zIndex,
+            className: image.className
+        };
+
+        const corner1 = L.latLng(image.corner1.x, image.corner1.y);
+        const corner2 = L.latLng(image.corner2.x, image.corner2.y);
+        const bounds = L.latLngBounds(corner1, corner2);
+
+        const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
+        layers[mapId].push(imgLayer);
+        imgLayer.addTo(maps[mapId]);
+    },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
         const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...
         layers[mapId] = remainingLayers;
 
         layersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
+    },
+    fitBounds: function (mapId, corner1, corner2, padding, maxZoom) {
+        const corner1LL = L.latLng(corner1.x, corner1.y);
+        const corner2LL = L.latLng(corner2.x, corner2.y);
+        const mapBounds = L.latLngBounds(corner1LL, corner2LL);
+        maps[mapId].fitBounds(mapBounds, {
+            padding: padding == null ? null : L.point(padding.x, padding.y),
+            maxZoom: maxZoom
+        });
+    },
+    panTo: function (mapId, position, animate, duration, easeLinearity, noMoveStart) {
+        const pos = L.latLng(position.x, position.y);
+        maps[mapId].panTo(pos, {
+            animate: animate,
+            duration: duration,
+            easeLinearity: easeLinearity,
+            noMoveStart: noMoveStart
+        });
     }
 };
 
