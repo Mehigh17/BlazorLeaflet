@@ -1,10 +1,17 @@
-﻿using BlazorLeaflet.Utils;
+﻿using BlazorLeaflet.Models.Events;
+using BlazorLeaflet.Utils;
+using Microsoft.JSInterop;
+using System;
 using System.Drawing;
 
 namespace BlazorLeaflet.Models
 {
     public class Marker : InteractiveLayer
     {
+        /// <summary>
+        /// Triggered when the marker is dragged. Needs Draggable property to be set to true.
+        /// </summary>
+        public event EventHandler OnDrag;
 
         /// <summary>
         /// The position of the marker on the map.
@@ -74,6 +81,12 @@ namespace BlazorLeaflet.Models
         /// Number of pixels the map should pan by.
         /// </summary>
         public int AutoPanSpeed { get; set; } = 10;
+        
+        [JSInvokable]
+        public void NotifyMouseOver(MouseEvent mouseEvent)
+        {
+            Console.WriteLine($"Mouse hovered over '{Title}' => lat: {mouseEvent.LatLng.Lat}, lng: {mouseEvent.LatLng.Lng}");
+        }
 
         public Marker(float x, float y) : this(new PointF(x, y))
         {

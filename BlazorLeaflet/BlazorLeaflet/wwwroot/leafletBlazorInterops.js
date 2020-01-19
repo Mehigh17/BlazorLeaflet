@@ -301,7 +301,59 @@ function connectLayerEvents(layer, objectReference) {
         objectReference.invokeMethodAsync("NotifyAdd", cleanupEventArgsForSerialization(eventArgs));
     });
 
+    layer.on("remove", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyRemove", cleanupEventArgsForSerialization(eventArgs));
+    });
 
+    layer.on("popupopen", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyPopupOpen", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    layer.on("popupclose", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyPopupClose", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    layer.on("tooltipopen", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyTooltipOpen", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    layer.on("tooltipclose", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyTooltipClose", cleanupEventArgsForSerialization(eventArgs));
+    });
+}
+
+
+function connectInteractiveLayerEvents(interactiveLayer, objectReference) {
+
+    connectLayerEvents(interactiveLayer, objectReference);
+
+    interactiveLayer.on("click", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyClick", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("dblclick", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyDblClick", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("mousedown", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMouseDown", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("mouseup", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMouseUp", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("mouseover", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMouseOver", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("mouseout", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMouseOut", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    interactiveLayer.on("contextmenu", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyContextMenu", cleanupEventArgsForSerialization(eventArgs));
+    });
 }
 
 // #endregion
