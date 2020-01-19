@@ -11,7 +11,7 @@ window.leafletBlazor = {
         maps[mapId] = map;
         layers[mapId] = [];
     },
-    addTilelayer: function (mapId, tileLayer) {
+    addTilelayer: function (mapId, tileLayer, objectReference) {
         const layer = L.tileLayer(tileLayer.urlTemplate, {
             attribution: tileLayer.attribution,
             pane: tileLayer.pane,
@@ -35,7 +35,7 @@ window.leafletBlazor = {
         });
         layer.addTo(maps[mapId]);
     },
-    addMarker: function (mapId, marker) {
+    addMarker: function (mapId, marker, objectReference) {
         var options = {
             ...createInteractiveLayer(marker),
             keyboard: marker.isKeyboardAccessible,
@@ -69,8 +69,12 @@ window.leafletBlazor = {
         }
 
         layers[mapId].push(mkr);
+
+        mkr.on("mouseover", function (eventArgs) {
+            objectReference.invokeMethodAsync("NotifyMouseOver", cleanupEventArgsForSerialization(eventArgs));
+        });
     },
-    addPolyline: function (mapId, polyline) {
+    addPolyline: function (mapId, polyline, objectReference) {
         const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
 
         layers[mapId].push(layer);
@@ -84,7 +88,7 @@ window.leafletBlazor = {
             addPopup(layer, polyline.popup);
         }
     },
-    addPolygon: function (mapId, polygon) {
+    addPolygon: function (mapId, polygon, objectReference) {
         const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
 
         layers[mapId].push(layer);
@@ -98,7 +102,7 @@ window.leafletBlazor = {
             addPopup(layer, polygon.popup);
         }
     },
-    addRectangle: function (mapId, rectangle) {
+    addRectangle: function (mapId, rectangle, objectReference) {
         const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
 
         layers[mapId].push(layer);
@@ -112,7 +116,7 @@ window.leafletBlazor = {
             addPopup(layer, rectangle.popup);
         }
     },
-    addCircle: function (mapId, circle) {
+    addCircle: function (mapId, circle, objectReference) {
         const layer = L.circle([circle.position.x, circle.position.y],
             {
                 ...createPath(circle),
@@ -130,7 +134,7 @@ window.leafletBlazor = {
             addPopup(layer, circle.popup);
         }
     },
-    addImageLayer: function(mapId, image) {
+    addImageLayer: function (mapId, image, objectReference) {
         const layerOptions = {
             ...createInteractiveLayer(image),
             opacity: image.opacity,
@@ -277,3 +281,27 @@ function addPopup(layerObj, popup) {
         closeOnEscapeKey: popup.closeOnEscapeKey,
     });
 }
+
+// #region events
+
+// removes properties that can cause circular references
+function cleanupEventArgsForSerialization(eventArgs) {
+    return Object.assign(eventArgs,
+    {
+        target: undefined,
+        sourceTarget: undefined,
+        propagatedFrom: undefined
+    });
+}
+
+
+function connectLayerEvents(layer, objectReference) {
+
+    layer.on("add", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyAdd", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+
+}
+
+// #endregion
