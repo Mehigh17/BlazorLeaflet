@@ -70,9 +70,7 @@ window.leafletBlazor = {
 
         layers[mapId].push(mkr);
 
-        mkr.on("mouseover", function (eventArgs) {
-            objectReference.invokeMethodAsync("NotifyMouseOver", cleanupEventArgsForSerialization(eventArgs));
-        });
+        connectMarkerEvents(mkr, objectReference);
     },
     addPolyline: function (mapId, polyline, objectReference) {
         const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
@@ -286,11 +284,13 @@ function addPopup(layerObj, popup) {
 
 // removes properties that can cause circular references
 function cleanupEventArgsForSerialization(eventArgs) {
+
     return Object.assign(eventArgs,
     {
         target: undefined,
         sourceTarget: undefined,
-        propagatedFrom: undefined
+        propagatedFrom: undefined,
+        originalEvent: undefined
     });
 }
 
@@ -353,6 +353,35 @@ function connectInteractiveLayerEvents(interactiveLayer, objectReference) {
 
     interactiveLayer.on("contextmenu", function (eventArgs) {
         objectReference.invokeMethodAsync("NotifyContextMenu", cleanupEventArgsForSerialization(eventArgs));
+    });
+}
+
+function connectMarkerEvents(marker, objectReference) {
+
+    connectInteractiveLayerEvents(marker, objectReference);
+
+    marker.on("move", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMove", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    marker.on("dragstart", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyDragStart", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    marker.on("movestart", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMoveStart", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    marker.on("drag", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyDrag", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    marker.on("dragend", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyDragEnd", cleanupEventArgsForSerialization(eventArgs));
+    });
+
+    marker.on("moveend", function (eventArgs) {
+        objectReference.invokeMethodAsync("NotifyMoveEnd", cleanupEventArgsForSerialization(eventArgs));
     });
 }
 

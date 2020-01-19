@@ -38,7 +38,7 @@ namespace BlazorLeaflet.Models
 
         #region events
 
-        public delegate void EventHandler(object sender, Event e);
+        public delegate void EventHandler(Layer sender, Event e);
 
         public event EventHandler OnAdd;
 
@@ -56,7 +56,7 @@ namespace BlazorLeaflet.Models
             OnRemove?.Invoke(this, eventArgs);
         }
 
-        public delegate void PopupEventHandler(object sender, PopupEvent e);
+        public delegate void PopupEventHandler(Layer sender, PopupEvent e);
 
         public event PopupEventHandler OnPopupOpen;
 
@@ -74,7 +74,7 @@ namespace BlazorLeaflet.Models
             OnPopupClose?.Invoke(this, eventArgs);
         }
 
-        public delegate void TooltipEventHandler(object sender, TooltipEvent e);
+        public delegate void TooltipEventHandler(Layer sender, TooltipEvent e);
 
         public event TooltipEventHandler OnTooltipOpen;
 

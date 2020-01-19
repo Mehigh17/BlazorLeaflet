@@ -9,11 +9,6 @@ namespace BlazorLeaflet.Models
     public class Marker : InteractiveLayer
     {
         /// <summary>
-        /// Triggered when the marker is dragged. Needs Draggable property to be set to true.
-        /// </summary>
-        public event EventHandler OnDrag;
-
-        /// <summary>
         /// The position of the marker on the map.
         /// </summary>
         public PointF Position { get; set; }
@@ -82,12 +77,6 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public int AutoPanSpeed { get; set; } = 10;
         
-        [JSInvokable]
-        public void NotifyMouseOver(MouseEvent mouseEvent)
-        {
-            Console.WriteLine($"Mouse hovered over '{Title}' => lat: {mouseEvent.LatLng.Lat}, lng: {mouseEvent.LatLng.Lng}");
-        }
-
         public Marker(float x, float y) : this(new PointF(x, y))
         {
         }
@@ -96,6 +85,64 @@ namespace BlazorLeaflet.Models
         {
             Position = position;
         }
+
+        #region events
+
+        public delegate void DragEventHandler(Marker sender, DragEvent e);
+
+        public event DragEventHandler OnMove;
+
+        [JSInvokable]
+        public void NotifyMove(DragEvent eventArgs)
+        {
+            OnMove?.Invoke(this, eventArgs);
+        }
+
+        public delegate void EventHandlerMarker(Marker sender, Event e);
+
+        public event EventHandlerMarker OnDragStart;
+
+        [JSInvokable]
+        public void NotifyDragStart(Event eventArgs)
+        {
+            OnDragStart?.Invoke(this, eventArgs);
+        }
+
+        public event EventHandlerMarker OnMoveStart;
+
+        [JSInvokable]
+        public void NotifyMoveStart(Event eventArgs)
+        {
+            OnMoveStart?.Invoke(this, eventArgs);
+        }
+
+        public event DragEventHandler OnDrag;
+
+        [JSInvokable]
+        public void NotifyDrag(DragEvent eventArgs)
+        {
+            OnDrag?.Invoke(this, eventArgs);
+        }
+
+        public delegate void DragEndEventHandler(Marker sender, DragEndEvent e);
+
+        public event DragEndEventHandler OnDragEnd;
+
+        [JSInvokable]
+        public void NotifyDragEnd(DragEndEvent eventArgs)
+        {
+            OnDragEnd?.Invoke(this, eventArgs);
+        }
+
+        public event EventHandlerMarker OnMoveEnd;
+
+        [JSInvokable]
+        public void NotifyMoveEnd(Event eventArgs)
+        {
+            OnMoveEnd?.Invoke(this, eventArgs);
+        }
+
+        #endregion
 
     }
 }

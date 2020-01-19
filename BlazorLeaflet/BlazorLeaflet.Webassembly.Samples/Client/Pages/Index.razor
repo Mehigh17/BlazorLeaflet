@@ -2,9 +2,22 @@
 
 @using System.Drawing
 @using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
 @inject IJSRuntime jsRuntime
 
 <h1>Blazor Leaflet</h1>
+
+<div class="form-inline m-2">
+    <div class="form-group mb-2">
+        <label>Lat </label>
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lat" disabled />
+    </div>
+
+    <div class="form-group mb-2">
+        <label>Lng </label>
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lng" disabled />
+    </div>
+</div>
 
 <div style="height: 500px; width: 500px;">
     <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
@@ -17,6 +30,8 @@
 
     protected override void OnInitialized()
     {
+        _startAt = new PointF(Lat, Lng);
+
         _map = new Map(jsRuntime);
 
         _map.Layers.Add(new TileLayer
@@ -30,9 +45,31 @@
             Draggable = true,
             Title = "Marker 1"
         };
+
+        marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
+
+        marker.OnClick += (s, e) => Console.WriteLine("OnClick");
+
+        marker.OnMove += OnDrag;
+        marker.OnDrag += OnDrag;
+
+
         _map.Layers.Add(marker);
     }
 
-    private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
+    private void OnDrag(Marker marker, DragEvent evt)
+    {
+
+
+        Lat = (float)evt.LatLng.Lat;
+        Lng = (float)evt.LatLng.Lng;
+        StateHasChanged();
+    }
+
+    private float Lat { get; set; } = 47.5574007f;
+
+    private float Lng { get; set; } = 16.3918687f;
+
+    private PointF _startAt;
 
 }
