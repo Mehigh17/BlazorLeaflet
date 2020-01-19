@@ -285,74 +285,59 @@ function addPopup(layerObj, popup) {
 // removes properties that can cause circular references
 function cleanupEventArgsForSerialization(eventArgs) {
 
-    return Object.assign(eventArgs,
-    {
-        target: undefined,
-        sourceTarget: undefined,
-        propagatedFrom: undefined,
-        originalEvent: undefined
-    });
+    const propertiesToRemove = [
+        "target",
+        "sourceTarget",
+        "propagatedFrom",
+        "originalEvent"
+    ];
+
+    const copy = {};
+
+    for (let key in eventArgs) {
+        if (!propertiesToRemove.includes(key) && eventArgs.hasOwnProperty(key)) {
+            copy[key] = eventArgs[key];
+        }
+    }
+
+    return copy;
 }
 
+function mapEvents(mapElement, objectReference, eventHandlerDict) {
+    for (let key in eventHandlerDict) {
+
+        const handlerName = eventHandlerDict[key];
+
+        mapElement.on(key, function (eventArgs) {
+            objectReference.invokeMethodAsync(handlerName,
+                cleanupEventArgsForSerialization(eventArgs));
+        });
+    }
+}
 
 function connectLayerEvents(layer, objectReference) {
-
-    layer.on("add", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyAdd", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    layer.on("remove", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyRemove", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    layer.on("popupopen", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyPopupOpen", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    layer.on("popupclose", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyPopupClose", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    layer.on("tooltipopen", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyTooltipOpen", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    layer.on("tooltipclose", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyTooltipClose", cleanupEventArgsForSerialization(eventArgs));
+    mapEvents(layer, objectReference, {
+        "add": "NotifyAdd",
+        "remove": "NotifyRemove",
+        "popupopen": "NotifyPopupOpen",
+        "popupclose": "NotifyPopupClose",
+        "tooltipopen": "NotifyTooltipOpen",
+        "tooltipclose": "NotifyTooltipClose",
     });
 }
-
 
 function connectInteractiveLayerEvents(interactiveLayer, objectReference) {
 
     connectLayerEvents(interactiveLayer, objectReference);
 
-    interactiveLayer.on("click", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyClick", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("dblclick", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyDblClick", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("mousedown", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMouseDown", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("mouseup", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMouseUp", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("mouseover", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMouseOver", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("mouseout", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMouseOut", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    interactiveLayer.on("contextmenu", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyContextMenu", cleanupEventArgsForSerialization(eventArgs));
+    mapEvents(interactiveLayer, objectReference, {
+        "click": "NotifyClick",
+        "dblclick": "NotifyDblClick",
+        "mousedown": "NotifyMouseDown",
+        "mouseup": "NotifyMouseUp",
+        "mouseover": "NotifyMouseOver",
+        "mouseout": "NotifyMouseOut",
+        "contextmenu": "NotifyContextMenu",
     });
 }
 
@@ -360,28 +345,13 @@ function connectMarkerEvents(marker, objectReference) {
 
     connectInteractiveLayerEvents(marker, objectReference);
 
-    marker.on("move", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMove", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    marker.on("dragstart", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyDragStart", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    marker.on("movestart", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMoveStart", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    marker.on("drag", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyDrag", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    marker.on("dragend", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyDragEnd", cleanupEventArgsForSerialization(eventArgs));
-    });
-
-    marker.on("moveend", function (eventArgs) {
-        objectReference.invokeMethodAsync("NotifyMoveEnd", cleanupEventArgsForSerialization(eventArgs));
+    mapEvents(marker, objectReference, {
+        "move": "NotifyMove",
+        "dragstart": "NotifyDragStart",
+        "movestart": "NotifyMoveStart",
+        "drag": "NotifyDrag",
+        "dragend": "NotifyDragEnd",
+        "moveend": "NotifyMoveEnd",
     });
 }
 
