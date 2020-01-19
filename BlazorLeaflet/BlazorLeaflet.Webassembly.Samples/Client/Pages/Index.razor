@@ -5,7 +5,9 @@
 @using BlazorLeaflet.Models.Events
 @inject IJSRuntime jsRuntime
 
-<h1>Blazor Leaflet</h1>
+<h1>Blazor Leaflet </h1>
+
+<h3>Drag &amp; drop the Marker!</h3>
 
 <div class="form-inline m-2">
     <div class="form-group mb-2">
@@ -46,21 +48,19 @@
             Title = "Marker 1"
         };
 
-        marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
+        // marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
 
-        marker.OnClick += (s, e) => Console.WriteLine("OnClick");
+        // marker.OnClick += (s, e) => Console.WriteLine("OnClick");
 
         marker.OnMove += OnDrag;
-        marker.OnDrag += OnDrag;
-
+        
+        // marker.OnDrag += OnDrag;
 
         _map.Layers.Add(marker);
     }
 
     private void OnDrag(Marker marker, DragEvent evt)
     {
-
-
         Lat = (float)evt.LatLng.Lat;
         Lng = (float)evt.LatLng.Lng;
         StateHasChanged();
