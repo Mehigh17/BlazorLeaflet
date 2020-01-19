@@ -20,7 +20,7 @@ namespace BlazorLeaflet.Models
 
         public delegate void MouseEventHandler(object sender, MouseEvent e);
 
-        public MouseEventHandler OnClick;
+        public event MouseEventHandler OnClick;
 
         [JSInvokable]
         public void NotifyClick(MouseEvent eventArgs)
@@ -28,7 +28,7 @@ namespace BlazorLeaflet.Models
             OnClick?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnDblClick;
+        public event MouseEventHandler OnDblClick;
 
         [JSInvokable]
         public void NotifyDblClick(MouseEvent eventArgs)
@@ -36,7 +36,7 @@ namespace BlazorLeaflet.Models
             OnDblClick?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnMouseDown;
+        public event MouseEventHandler OnMouseDown;
 
         [JSInvokable]
         public void NotifyMouseDown(MouseEvent eventArgs)
@@ -44,7 +44,7 @@ namespace BlazorLeaflet.Models
             OnMouseDown?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnMouseUp;
+        public event MouseEventHandler OnMouseUp;
 
         [JSInvokable]
         public void NotifyMouseUp(MouseEvent eventArgs)
@@ -52,7 +52,7 @@ namespace BlazorLeaflet.Models
             OnMouseUp?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnMouseOver;
+        public event MouseEventHandler OnMouseOver;
 
         [JSInvokable]
         public void NotifyMouseOver(MouseEvent eventArgs)
@@ -60,7 +60,7 @@ namespace BlazorLeaflet.Models
             OnMouseOver?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnMouseOut;
+        public event MouseEventHandler OnMouseOut;
 
         [JSInvokable]
         public void NotifyMouseOut(MouseEvent eventArgs)
@@ -68,7 +68,7 @@ namespace BlazorLeaflet.Models
             OnMouseOut?.Invoke(this, eventArgs);
         }
 
-        public MouseEventHandler OnContextMenu;
+        public event MouseEventHandler OnContextMenu;
 
         [JSInvokable]
         public void NotifyContextMenu(MouseEvent eventArgs)
