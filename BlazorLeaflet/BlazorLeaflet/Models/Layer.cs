@@ -1,10 +1,11 @@
-﻿using BlazorLeaflet.Utils;
+﻿using BlazorLeaflet.Models.Events;
+using BlazorLeaflet.Utils;
+using Microsoft.JSInterop;
 
 namespace BlazorLeaflet.Models
 {
     public abstract class Layer
     {
-
         /// <summary>
         /// Unique identifier used by the interoperability service on the client side to identify layers.
         /// </summary>
@@ -35,5 +36,62 @@ namespace BlazorLeaflet.Models
             Id = StringHelper.GetRandomString(20);
         }
 
+        #region events
+
+        public delegate void EventHandler(object sender, Event e);
+
+        public delegate void PopupEventHandler(object sender, PopupEvent e);
+
+        public delegate void TooltipEventHandler(object sender, TooltipEvent e);
+
+        public event EventHandler OnAdd;
+
+        public event EventHandler OnRemove;
+
+        public event PopupEventHandler OnPopupOpen;
+
+        public event PopupEventHandler OnPopupClose;
+
+        public event TooltipEventHandler OnTooltipOpen;
+
+        public event TooltipEventHandler OnTooltipClose;
+
+        [JSInvokable]
+        public void NotifyAdd(Event eventArgs)
+        {
+            OnAdd?.Invoke(this, eventArgs);
+        }
+
+        [JSInvokable]
+        public void NotifyRemove(Event eventArgs)
+        {
+            OnRemove?.Invoke(this, eventArgs);
+        }
+
+        [JSInvokable]
+        public void NotifyPopupOpen(PopupEvent eventArgs)
+        {
+            OnPopupOpen?.Invoke(this, eventArgs);
+        }
+
+        [JSInvokable]
+        public void NotifyPopupClose(PopupEvent eventArgs)
+        {
+            OnPopupClose?.Invoke(this, eventArgs);
+        }
+
+        [JSInvokable]
+        public void NotifyTooltipOpen(TooltipEvent eventArgs)
+        {
+            OnTooltipOpen?.Invoke(this, eventArgs);
+        }
+
+        [JSInvokable]
+        public void NotifyTooltipClose(TooltipEvent eventArgs)
+        {
+            OnTooltipClose?.Invoke(this, eventArgs);
+        }
+
+        #endregion
     }
 }
