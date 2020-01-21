@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29311.281
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorLeaflet", "BlazorLeaflet\BlazorLeaflet.csproj", "{492F5055-CDFC-44C7-9997-7BEA9FF41C08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorLeaflet", "BlazorLeaflet\BlazorLeaflet.csproj", "{492F5055-CDFC-44C7-9997-7BEA9FF41C08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorLeaflet.Samples", "BlazorLeaflet.Samples\BlazorLeaflet.Samples.csproj", "{ACEF0CBD-C2DE-4BE8-8DDA-C6D8C0F5736D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorLeaflet.Samples", "BlazorLeaflet.Samples\BlazorLeaflet.Samples.csproj", "{ACEF0CBD-C2DE-4BE8-8DDA-C6D8C0F5736D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlazorLeaflet.Webassembly.Samples", "BlazorLeaflet.Webassembly.Samples", "{265F0429-63CC-4E86-B8FE-6FC4E7388229}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorLeaflet.Webassembly.Samples.Client", "BlazorLeaflet.Webassembly.Samples\Client\BlazorLeaflet.Webassembly.Samples.Client.csproj", "{E84BBB7E-36BB-4311-AF97-0AF803B09055}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorLeaflet.Webassembly.Samples.Server", "BlazorLeaflet.Webassembly.Samples\Server\BlazorLeaflet.Webassembly.Samples.Server.csproj", "{6323127D-BE9A-4937-ABC5-792FFE878C22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +27,21 @@ Global
 		{ACEF0CBD-C2DE-4BE8-8DDA-C6D8C0F5736D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACEF0CBD-C2DE-4BE8-8DDA-C6D8C0F5736D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACEF0CBD-C2DE-4BE8-8DDA-C6D8C0F5736D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E84BBB7E-36BB-4311-AF97-0AF803B09055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E84BBB7E-36BB-4311-AF97-0AF803B09055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E84BBB7E-36BB-4311-AF97-0AF803B09055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E84BBB7E-36BB-4311-AF97-0AF803B09055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6323127D-BE9A-4937-ABC5-792FFE878C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6323127D-BE9A-4937-ABC5-792FFE878C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6323127D-BE9A-4937-ABC5-792FFE878C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6323127D-BE9A-4937-ABC5-792FFE878C22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E84BBB7E-36BB-4311-AF97-0AF803B09055} = {265F0429-63CC-4E86-B8FE-6FC4E7388229}
+		{6323127D-BE9A-4937-ABC5-792FFE878C22} = {265F0429-63CC-4E86-B8FE-6FC4E7388229}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25793D1A-41C7-4799-96BF-C43E0DFF8D2A}
