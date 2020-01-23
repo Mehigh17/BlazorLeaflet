@@ -1,0 +1,76 @@
+﻿@page "/rectangle"
+
+@using System.Drawing
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Blazor Leaflet </h1>
+
+<h3>Circle Sample</h3>
+
+<div class="content-row">
+    <div style="height: 500px; width: 500px;">
+        <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    </div>
+
+    <DemoLogger @ref="Logger" />
+</div>
+
+@code
+{
+    private DemoLogger Logger;
+
+    private Map _map;
+
+    protected override void OnInitialized()
+    {
+        const float width = 10f;
+
+        const float height = 20f;
+
+        _startAt = new PointF(Lon, Lat);
+
+        _map = new Map(jsRuntime);
+
+        _map.Layers.Add(new TileLayer
+        {
+            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+        });
+
+        var rectangle = new BlazorLeaflet.Models.Rectangle
+        {
+            Shape = RectangleF.FromLTRB(Lon, Lat, Lon + width, Lat + height),
+            Fill = true,
+            FillColor = Color.Red,
+            Popup = new Popup { Content = "This is a rectangle" },
+        };
+
+        Action<string> log = (string message) => Logger.Log($"{nameof(Circle)}.{message}");
+
+        rectangle.OnAdd += (s, e) => log(nameof(rectangle.OnAdd));
+        rectangle.OnClick += (s, e) => log(nameof(rectangle.OnClick));
+        rectangle.OnContextMenu += (s, e) => log(nameof(rectangle.OnContextMenu));
+        rectangle.OnDblClick += (s, e) => log(nameof(rectangle.OnDblClick));
+        rectangle.OnMouseDown += (s, e) => log(nameof(rectangle.OnMouseDown));
+        rectangle.OnMouseOut += (s, e) => log(nameof(rectangle.OnMouseOut));
+        rectangle.OnMouseOver += (s, e) => log(nameof(rectangle.OnMouseOver));
+        rectangle.OnMouseUp += (s, e) => log(nameof(rectangle.OnMouseUp));
+        rectangle.OnRemove += (s, e) => log(nameof(rectangle.OnRemove));
+        rectangle.OnPopupClose += (s, e) => log(nameof(rectangle.OnPopupClose));
+        rectangle.OnPopupOpen += (s, e) => log(nameof(rectangle.OnPopupOpen));
+        rectangle.OnTooltipClose += (s, e) => log(nameof(rectangle.OnTooltipClose));
+        rectangle.OnTooltipOpen += (s, e) => log(nameof(rectangle.OnTooltipOpen));
+
+        _map.Layers.Add(rectangle);
+
+    }
+
+    private float Lon { get; set; } = 47.5574007f;
+
+    private float Lat { get; set; } = 16.3918687f;
+
+    private PointF _startAt;
+
+}
