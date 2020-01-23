@@ -53,25 +53,27 @@
             Title = "Marker 1"
         };
 
-        marker.OnAdd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnAdd)}");
-        marker.OnClick += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnClick)}");
-        marker.OnContextMenu += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnContextMenu)}");
-        marker.OnDblClick += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDblClick)}");
-        marker.OnDrag += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDrag)}");
-        marker.OnDragEnd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDragEnd)}");
-        marker.OnDragStart += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDragStart)}");
-        marker.OnMouseDown += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseDown)}");
-        marker.OnMouseOut += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseOut)}");
-        marker.OnMouseOver += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseOver)}");
-        marker.OnMouseUp += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseUp)}");
-        marker.OnMove += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMove)}");
-        marker.OnMoveEnd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMoveEnd)}");
-        marker.OnMoveStart += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMoveStart)}");
-        marker.OnRemove += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnRemove)}");
-        marker.OnPopupClose += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnPopupClose)}");
-        marker.OnPopupOpen += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnPopupOpen)}");
-        marker.OnTooltipClose += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnTooltipClose)}");
-        marker.OnTooltipOpen += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnTooltipOpen)}");
+        Action<string> log = (string message) => Logger.Log($"{nameof(Marker)}.{message}");
+
+        marker.OnAdd += (s, e) => log(nameof(marker.OnAdd));
+        marker.OnClick += (s, e) => log(nameof(marker.OnClick));
+        marker.OnContextMenu += (s, e) => log(nameof(marker.OnContextMenu));
+        marker.OnDblClick += (s, e) => log(nameof(marker.OnDblClick));
+        marker.OnDrag += (s, e) => log(nameof(marker.OnDrag));
+        marker.OnDragEnd += (s, e) => log(nameof(marker.OnDragEnd));
+        marker.OnDragStart += (s, e) => log(nameof(marker.OnDragStart));
+        marker.OnMouseDown += (s, e) => log(nameof(marker.OnMouseDown));
+        marker.OnMouseOut += (s, e) => log(nameof(marker.OnMouseOut));
+        marker.OnMouseOver += (s, e) => log(nameof(marker.OnMouseOver));
+        marker.OnMouseUp += (s, e) => log(nameof(marker.OnMouseUp));
+        marker.OnMove += (s, e) => log(nameof(marker.OnMove));
+        marker.OnMoveEnd += (s, e) => log(nameof(marker.OnMoveEnd));
+        marker.OnMoveStart += (s, e) => log(nameof(marker.OnMoveStart));
+        marker.OnRemove += (s, e) => log(nameof(marker.OnRemove));
+        marker.OnPopupClose += (s, e) => log(nameof(marker.OnPopupClose));
+        marker.OnPopupOpen += (s, e) => log(nameof(marker.OnPopupOpen));
+        marker.OnTooltipClose += (s, e) => log(nameof(marker.OnTooltipClose));
+        marker.OnTooltipOpen += (s, e) => log(nameof(marker.OnTooltipOpen));
 
         marker.OnMove += OnDrag;
 
