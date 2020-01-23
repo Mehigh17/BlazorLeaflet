@@ -87,6 +87,8 @@ window.leafletBlazor = {
         if (polyline.popup) {
             addPopup(layer, polyline.popup);
         }
+
+        connectPolylineEvents(layer, objectReference);
     },
     addPolygon: function (mapId, polygon, objectReference) {
         const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
@@ -115,6 +117,7 @@ window.leafletBlazor = {
         if (rectangle.popup) {
             addPopup(layer, rectangle.popup);
         }
+        connectRectangleEvents(layer, objectReference);
     },
     addCircle: function (mapId, circle, objectReference) {
         const layer = L.circle([circle.position.x, circle.position.y],
@@ -392,4 +395,15 @@ function connectTileLayerEvents(tileLayer, objectReference) {
     connectGridLayerEvents(tileLayer, objectReference);
 }
 
+function connectPathEvents(path, objectReference) {
+    connectInteractiveLayerEvents(path, objectReference);
+}
+
+function connectPolylineEvents(polyLine, objectReference) {
+    connectPathEvents(polyLine, objectReference);
+}
+
+function connectRectangleEvents(rectangle, objectReference) {
+    connectPolylineEvents(rectangle, objectReference);
+}
 // #endregion
