@@ -131,6 +131,7 @@ window.leafletBlazor = {
         if (circle.popup) {
             addPopup(layer, circle.popup);
         }
+        connectCircleEvents(layer, objectReference);
     },
     addImageLayer: function (mapId, image, objectReference) {
         const layerOptions = {
@@ -284,12 +285,12 @@ function addPopup(layerObj, popup) {
 
 // removes properties that can cause circular references
 function cleanupEventArgsForSerialization(eventArgs) {
-
     const propertiesToRemove = [
         "target",
         "sourceTarget",
         "propagatedFrom",
-        "originalEvent"
+        "originalEvent",
+        "popup",
     ];
 
     const copy = {};
@@ -352,6 +353,15 @@ function connectMarkerEvents(marker, objectReference) {
         "drag": "NotifyDrag",
         "dragend": "NotifyDragEnd",
         "moveend": "NotifyMoveEnd",
+    });
+}
+
+function connectCircleEvents(circle, objectReference) {
+
+    connectInteractiveLayerEvents(circle, objectReference);
+
+    mapEvents(circle, objectReference, {
+        "move": "NotifyMove"
     });
 }
 
