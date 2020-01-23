@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BlazorLeaflet.Models.Events;
+using Microsoft.JSInterop;
+using System;
 using System.Drawing;
 
 namespace BlazorLeaflet.Models
@@ -29,6 +31,58 @@ namespace BlazorLeaflet.Models
         /// If set, tiles will only be loaded inside the set.
         /// </summary>
         public Tuple<double, double> Bounds { get; set; }
+
+        #region events
+
+        public event EventHandler OnLoading;
+
+        [JSInvokable]
+        public void NotifyLoading(Event eventArgs)
+        {
+            OnLoading?.Invoke(this, eventArgs);
+        }
+
+        public event TileEventHandler OnTileUnload;
+
+        [JSInvokable]
+        public void NotifyTileUnload(TileEvent eventArgs)
+        {
+            OnTileUnload?.Invoke(this, eventArgs);
+        }
+
+        public event TileEventHandler OnTileLoadStart;
+
+        [JSInvokable]
+        public void NotifyileLoadStart(TileEvent eventArgs)
+        {
+            OnTileLoadStart?.Invoke(this, eventArgs);
+        }
+
+        public event TileErrorEventHandler OnTileError;
+
+        [JSInvokable]
+        public void NotifyTileError(TileErrorEvent eventArgs)
+        {
+            OnTileError?.Invoke(this, eventArgs);
+        }
+
+        public event TileEventHandler OnTileLoad;
+
+        [JSInvokable]
+        public void NotifyTileLoad(TileEvent eventArgs)
+        {
+            OnTileLoad?.Invoke(this, eventArgs);
+        }
+
+        public event TileEventHandler OnLoad;
+
+        [JSInvokable]
+        public void NotifyLoad(TileEvent eventArgs)
+        {
+            OnLoad?.Invoke(this, eventArgs);
+        }
+
+        #endregion
 
     }
 }

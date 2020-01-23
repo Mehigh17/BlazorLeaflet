@@ -34,6 +34,8 @@ window.leafletBlazor = {
             // crossOrigin
         });
         layer.addTo(maps[mapId]);
+
+        connectGridlayerEvents(layer, objectReference);
     },
     addMarker: function (mapId, marker, objectReference) {
         var options = {
@@ -373,6 +375,21 @@ function connectCircleEvents(circle, objectReference) {
     mapEvents(circle, objectReference, {
         "move": "NotifyMove"
     });
+}
+
+function connectGridlayerEvents(gridLayer, objectReference) {
+    mapEvents(gridLayer, objectReference, {
+        "loading": "NotifyLoading",
+        "tileunload": "NotifyTileUnload",
+        "tileloadstart": "NotifyileLoadStart",
+        "tileerror": "NotifyTileError",
+        "tileload": "NotifyTileLoad",
+        "load": "NotifyLoad",
+    });
+}
+
+function connectTilelayerEvents(tileLayer, objectReference) {
+    connectGridlayerEvents(tileLayer, objectReference);
 }
 
 // #endregion
