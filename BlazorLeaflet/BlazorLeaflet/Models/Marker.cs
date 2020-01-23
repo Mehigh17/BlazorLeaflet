@@ -88,8 +88,6 @@ namespace BlazorLeaflet.Models
 
         #region events
 
-        public delegate void DragEventHandler(Marker sender, DragEvent e);
-
         public event DragEventHandler OnMove;
 
         [JSInvokable]
@@ -97,8 +95,6 @@ namespace BlazorLeaflet.Models
         {
             OnMove?.Invoke(this, eventArgs);
         }
-
-        public delegate void EventHandlerMarker(Marker sender, Event e);
 
         public event EventHandlerMarker OnDragStart;
 
@@ -123,8 +119,6 @@ namespace BlazorLeaflet.Models
         {
             OnDrag?.Invoke(this, eventArgs);
         }
-
-        public delegate void DragEndEventHandler(Marker sender, DragEndEvent e);
 
         public event DragEndEventHandler OnDragEnd;
 
