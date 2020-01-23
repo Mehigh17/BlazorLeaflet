@@ -285,19 +285,29 @@ function addPopup(layerObj, popup) {
 
 // removes properties that can cause circular references
 function cleanupEventArgsForSerialization(eventArgs) {
+
     const propertiesToRemove = [
         "target",
         "sourceTarget",
         "propagatedFrom",
         "originalEvent",
-        "popup",
+    ];
+
+    const propertiesToCleanup = [
+        "popup"
     ];
 
     const copy = {};
 
     for (let key in eventArgs) {
-        if (!propertiesToRemove.includes(key) && eventArgs.hasOwnProperty(key)) {
-            copy[key] = eventArgs[key];
+
+        if (!key.startsWith("_") /* do not copy private properties */
+            && !propertiesToRemove.includes(key)
+            && eventArgs.hasOwnProperty(key)) {
+
+            copy[key] = propertiesToCleanup.includes(key)
+                ? cleanupEventArgsForSerialization(eventArgs[key])
+                : eventArgs[key];
         }
     }
 
