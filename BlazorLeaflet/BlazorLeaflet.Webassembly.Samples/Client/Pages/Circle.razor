@@ -1,0 +1,73 @@
+﻿@page "/circle"
+
+@using System.Drawing
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Blazor Leaflet </h1>
+
+<h3>Circle Sample</h3>
+
+<div class="content-row">
+    <div style="height: 500px; width: 500px;">
+        <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    </div>
+
+    <DemoLogger @ref="Logger" />
+</div>
+
+@code
+{
+    private DemoLogger Logger;
+
+    private Map _map;
+
+    protected override void OnInitialized()
+    {
+        _startAt = new PointF(Lat, Lng);
+
+        _map = new Map(jsRuntime);
+
+        _map.Layers.Add(new TileLayer
+        {
+            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+        });
+
+        var circle = new BlazorLeaflet.Models.Circle
+        {
+            Position = _startAt,
+            Radius = 500000,
+            Fill = true,
+            FillColor = Color.Magenta,
+            Popup = new Popup { Content = "Sample circle popup" },
+        };
+
+        Action<string> log = (string message) => Logger.Log($"{nameof(Circle)}.{message}");
+
+        circle.OnAdd += (s, e) => log(nameof(circle.OnAdd));
+        circle.OnClick += (s, e) => log(nameof(circle.OnClick));
+        circle.OnContextMenu += (s, e) => log(nameof(circle.OnContextMenu));
+        circle.OnDblClick += (s, e) => log(nameof(circle.OnDblClick));
+        circle.OnMouseDown += (s, e) => log(nameof(circle.OnMouseDown));
+        circle.OnMouseOut += (s, e) => log(nameof(circle.OnMouseOut));
+        circle.OnMouseOver += (s, e) => log(nameof(circle.OnMouseOver));
+        circle.OnMouseUp += (s, e) => log(nameof(circle.OnMouseUp));
+        circle.OnMove += (s, e) => log(nameof(circle.OnMove));
+        circle.OnRemove += (s, e) => log(nameof(circle.OnRemove));
+        circle.OnPopupClose += (s, e) => log(nameof(circle.OnPopupClose));
+        circle.OnPopupOpen += (s, e) => log(nameof(circle.OnPopupOpen));
+        circle.OnTooltipClose += (s, e) => log(nameof(circle.OnTooltipClose));
+        circle.OnTooltipOpen += (s, e) => log(nameof(circle.OnTooltipOpen));
+
+        _map.Layers.Add(circle);
+    }
+
+    private float Lat { get; set; } = 47.5574007f;
+
+    private float Lng { get; set; } = 16.3918687f;
+
+    private PointF _startAt;
+
+}
