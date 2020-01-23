@@ -1,0 +1,18 @@
+﻿<div class="demo-logger">
+
+    @for (var i = _logMessages.Count() - 1; i >= 0; i--)
+    {
+        <pre class="log-message">@i: @_logMessages[i]</pre>
+    }
+</div>
+
+@code {
+
+    private List<string> _logMessages = new List<string>();
+
+    public void Log(string message)
+    {
+        _logMessages.Add(message);
+        StateHasChanged();
+    }
+}

@@ -21,12 +21,17 @@
     </div>
 </div>
 
-<div style="height: 500px; width: 500px;">
-    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+<div class="content-row">
+    <div style="height: 500px; width: 500px;">
+        <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    </div>
+
+    <DemoLogger @ref="Logger" />
 </div>
 
 @code
 {
+    private DemoLogger Logger;
 
     private Map _map;
 
@@ -48,13 +53,27 @@
             Title = "Marker 1"
         };
 
-        // marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
-
-        // marker.OnClick += (s, e) => Console.WriteLine("OnClick");
+        marker.OnAdd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnAdd)}");
+        marker.OnClick += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnClick)}");
+        marker.OnContextMenu += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnContextMenu)}");
+        marker.OnDblClick += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDblClick)}");
+        marker.OnDrag += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDrag)}");
+        marker.OnDragEnd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDragEnd)}");
+        marker.OnDragStart += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnDragStart)}");
+        marker.OnMouseDown += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseDown)}");
+        marker.OnMouseOut += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseOut)}");
+        marker.OnMouseOver += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseOver)}");
+        marker.OnMouseUp += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMouseUp)}");
+        marker.OnMove += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMove)}");
+        marker.OnMoveEnd += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMoveEnd)}");
+        marker.OnMoveStart += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnMoveStart)}");
+        marker.OnRemove += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnRemove)}");
+        marker.OnPopupClose += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnPopupClose)}");
+        marker.OnPopupOpen += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnPopupOpen)}");
+        marker.OnTooltipClose += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnTooltipClose)}");
+        marker.OnTooltipOpen += (s, e) => Logger.Log($"{nameof(Marker)}.{nameof(Marker.OnTooltipOpen)}");
 
         marker.OnMove += OnDrag;
-        
-        // marker.OnDrag += OnDrag;
 
         _map.Layers.Add(marker);
     }

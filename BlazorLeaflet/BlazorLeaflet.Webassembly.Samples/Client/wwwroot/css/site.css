@@ -181,3 +181,24 @@ app {
         display: block;
     }
 }
+
+.content-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.demo-logger {
+    width: 300px;
+    height: 498px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: auto;
+    margin: 0 1rem;
+    padding: 1rem;
+}
+
+    .demo-logger .log-message {
+        margin: 0;
+        flex-shrink:0;
+    }
