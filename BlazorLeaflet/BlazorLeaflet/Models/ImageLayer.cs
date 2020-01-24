@@ -1,3 +1,5 @@
+using BlazorLeaflet.Models.Events;
+using Microsoft.JSInterop;
 using System.Drawing;
 
 namespace BlazorLeaflet.Models
@@ -50,6 +52,26 @@ namespace BlazorLeaflet.Models
             Corner1 = corner1;
             Corner2 = corner2;
         }
+
+        #region events
+
+        public event EventHandler OnLoad;
+
+        [JSInvokable]
+        public void NotifyLoad(Event eventArgs)
+        {
+            OnLoad?.Invoke(this, eventArgs);
+        }
+
+        public event EventHandler OnError;
+
+        [JSInvokable]
+        public void NotifyError(Event eventArgs)
+        {
+            OnError?.Invoke(this, eventArgs);
+        }
+
+        #endregion
 
     }
 }

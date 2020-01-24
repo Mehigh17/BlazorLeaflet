@@ -158,6 +158,8 @@ window.leafletBlazor = {
         const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
         layers[mapId].push(imgLayer);
         imgLayer.addTo(maps[mapId]);
+
+        connectImageLayerEvents(imgLayer, objectReference);
     },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
@@ -411,5 +413,15 @@ function connectRectangleEvents(rectangle, objectReference) {
 
 function connectPolygonEvents(polygon, objectReference) {
     connectPolylineEvents(polygon, objectReference);
+}
+
+function connectImageLayerEvents(imageLayer, objectReference) {
+
+    connectInteractiveLayerEvents(imageLayer, objectReference);
+
+    mapEvents(imageLayer, objectReference, {
+        "load": "NotifyLoad",
+        "error": "NotifyError",
+    });
 }
 // #endregion
