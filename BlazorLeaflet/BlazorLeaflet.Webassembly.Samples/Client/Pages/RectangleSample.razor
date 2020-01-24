@@ -25,10 +25,6 @@
 
     protected override void OnInitialized()
     {
-        const float width = 10f;
-
-        const float height = 20f;
-
         _startAt = new PointF(Lon, Lat);
 
         _map = new Map(jsRuntime);
@@ -41,7 +37,8 @@
 
         var rectangle = new BlazorLeaflet.Models.Rectangle
         {
-            Shape = RectangleF.FromLTRB(Lon, Lat, Lon + width, Lat + height),
+            
+            Shape = new RectangleF(Lon, Lat, 10f, 20f),
             Fill = true,
             FillColor = Color.Red,
             Popup = new Popup { Content = "This is a rectangle" },
@@ -64,12 +61,15 @@
         rectangle.OnTooltipOpen += (s, e) => log(nameof(rectangle.OnTooltipOpen));
 
         _map.Layers.Add(rectangle);
-
     }
 
-    private float Lon { get; set; } = 47.5574007f;
+    private float Lon { get; set; } = 21f;
 
-    private float Lat { get; set; } = 16.3918687f;
+    private float Lat { get; set; } = 20f;
+
+    private float Width { get; set; } = 2f;
+
+    private float Height { get; set; } = 1f;
 
     private PointF _startAt;
 
