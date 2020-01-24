@@ -57,7 +57,7 @@
             }
         };
 
-        Action<string> log = (string message) => Logger.Log($"{nameof(Marker)}.{message}");
+        Action<string> log = (string message) => Logger.Log($"{nameof(Polygon)}.{message}");
 
         polygon.OnAdd += (s, e) => log(nameof(polygon.OnAdd));
         polygon.OnClick += (s, e) => log(nameof(polygon.OnClick));

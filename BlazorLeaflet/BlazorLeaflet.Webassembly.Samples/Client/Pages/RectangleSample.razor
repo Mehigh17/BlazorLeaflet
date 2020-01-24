@@ -44,7 +44,7 @@
             Popup = new Popup { Content = "This is a rectangle" },
         };
 
-        Action<string> log = (string message) => Logger.Log($"{nameof(Circle)}.{message}");
+        Action<string> log = (string message) => Logger.Log($"{nameof(BlazorLeaflet.Models.Rectangle)}.{message}");
 
         rectangle.OnAdd += (s, e) => log(nameof(rectangle.OnAdd));
         rectangle.OnClick += (s, e) => log(nameof(rectangle.OnClick));

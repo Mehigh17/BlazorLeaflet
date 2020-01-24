@@ -60,7 +60,7 @@
             }
         };
 
-        Action<string> log = (string message) => Logger.Log($"{nameof(Marker)}.{message}");
+        Action<string> log = (string message) => Logger.Log($"{nameof(Polyline)}.{message}");
 
         polyline.OnAdd += (s, e) => log(nameof(polyline.OnAdd));
         polyline.OnClick += (s, e) => log(nameof(polyline.OnClick));
