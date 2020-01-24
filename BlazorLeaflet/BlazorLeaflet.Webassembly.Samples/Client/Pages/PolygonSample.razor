@@ -1,0 +1,85 @@
+﻿@page "/polygon"
+
+@using System.Drawing
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Blazor Leaflet </h1>
+
+<h3>Polygon Sample</h3>
+
+<div class="content-row">
+    <div style="height: 500px; width: 500px;">
+        <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    </div>
+
+    <DemoLogger @ref="Logger" />
+</div>
+
+@code
+{
+    private DemoLogger Logger;
+
+    private Map _map;
+
+    protected override void OnInitialized()
+    {
+        _startAt = new PointF(Lng, Lat);
+
+        _map = new Map(jsRuntime);
+
+        _map.Layers.Add(new TileLayer
+        {
+            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+        });
+
+        var polygon = new Polygon
+        {
+            Fill = true,
+            FillColor = Color.Blue,
+            Shape = new PointF[][] {
+                new PointF[]
+                {
+                    new PointF(Lng, Lat),
+                    new PointF(Lng + 1, Lat - 1),
+                    new PointF(Lng + 2, Lat),
+                    new PointF(Lng + 1, Lat + 1),
+                },
+                new PointF[]
+                {
+                    new PointF(Lng - 2, Lat - 2),
+                    new PointF(Lng - 1, Lat - 2),
+                    new PointF(Lng - 1, Lat - 1),
+                    new PointF(Lng - 2, Lat - 1),
+                }
+            }
+        };
+
+        Action<string> log = (string message) => Logger.Log($"{nameof(Marker)}.{message}");
+
+        polygon.OnAdd += (s, e) => log(nameof(polygon.OnAdd));
+        polygon.OnClick += (s, e) => log(nameof(polygon.OnClick));
+        polygon.OnContextMenu += (s, e) => log(nameof(polygon.OnContextMenu));
+        polygon.OnDblClick += (s, e) => log(nameof(polygon.OnDblClick));
+        polygon.OnMouseDown += (s, e) => log(nameof(polygon.OnMouseDown));
+        polygon.OnMouseOut += (s, e) => log(nameof(polygon.OnMouseOut));
+        polygon.OnMouseOver += (s, e) => log(nameof(polygon.OnMouseOver));
+        polygon.OnMouseUp += (s, e) => log(nameof(polygon.OnMouseUp));
+        polygon.OnRemove += (s, e) => log(nameof(polygon.OnRemove));
+        polygon.OnPopupClose += (s, e) => log(nameof(polygon.OnPopupClose));
+        polygon.OnPopupOpen += (s, e) => log(nameof(polygon.OnPopupOpen));
+        polygon.OnTooltipClose += (s, e) => log(nameof(polygon.OnTooltipClose));
+        polygon.OnTooltipOpen += (s, e) => log(nameof(polygon.OnTooltipOpen));
+
+        _map.Layers.Add(polygon);
+    }
+
+    private float Lat { get; set; } = 47.5574007f;
+
+    private float Lng { get; set; } = 16.3918687f;
+
+    private PointF _startAt;
+
+}
