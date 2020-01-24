@@ -18,6 +18,8 @@ namespace BlazorLeaflet.Models
 
         #region events
 
+        public delegate void MouseEventHandler(InteractiveLayer sender, MouseEvent e);
+
         public event MouseEventHandler OnClick;
 
         [JSInvokable]

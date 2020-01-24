@@ -38,12 +38,6 @@ namespace BlazorLeaflet.Models
 
         #region events
 
-        public delegate void DragEventHandler(Marker sender, DragEvent e);
-
-        public delegate void EventHandlerMarker(Marker sender, Event e);
-
-        public delegate void DragEndEventHandler(Marker sender, DragEndEvent e);
-
         public delegate void EventHandler(Layer sender, Event e);
 
         public delegate void TileEventHandler(Layer sender, TileEvent e);
@@ -53,8 +47,6 @@ namespace BlazorLeaflet.Models
         public delegate void PopupEventHandler(Layer sender, PopupEvent e);
 
         public delegate void TooltipEventHandler(Layer sender, TooltipEvent e); 
-        
-        public delegate void MouseEventHandler(InteractiveLayer sender, MouseEvent e);
 
         public event EventHandler OnAdd;
 

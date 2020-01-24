@@ -88,6 +88,12 @@ namespace BlazorLeaflet.Models
 
         #region events
 
+        public delegate void DragEventHandler(Marker sender, DragEvent e);
+
+        public delegate void EventHandlerMarker(Marker sender, Event e);
+
+        public delegate void DragEndEventHandler(Marker sender, DragEndEvent e);
+
         public event DragEventHandler OnMove;
 
         [JSInvokable]
