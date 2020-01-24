@@ -12,6 +12,18 @@ namespace BlazorLeaflet.Models
         public string Id { get; }
 
         /// <summary>
+        /// We need JSRuntime to call methods on the corresponding javascript object
+        /// It will be set my LeafletMap when the layer is added to the actual map.
+        /// </summary>
+        public IJSRuntime JSRuntime { get; internal set; }
+
+        /// <summary>
+        /// We need MapId to call methods on the corresponding javascript object.
+        /// It will be set my LeafletMap when the layer is added to the actual map.
+        /// </summary>
+        public string MapId { get; internal set; }
+
+        /// <summary>
         /// By default the layer will be added to the map's overlay pane. Overriding this option will cause the layer to be placed on another pane by default.
         /// </summary>
         public virtual string Pane { get; set; } = "overlayPane";

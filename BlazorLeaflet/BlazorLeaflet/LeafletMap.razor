@@ -21,7 +21,7 @@
             Map.Layers.CollectionChanged += OnLayersChanged;
             foreach (var layer in Map.Layers.ToList())
             {
-                await LeafletInterops.AddLayer(JsRuntime, Map.Id, layer);
+                await AddLayerToMap(layer);
             }
         }
     }
@@ -31,7 +31,7 @@
         if (args.Action == NotifyCollectionChangedAction.Add)
         {
             foreach (var item in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, Map.Id, item as Layer);
+                AddLayerToMap(item as Layer);
         }
         else if (args.Action == NotifyCollectionChangedAction.Remove)
         {
@@ -39,7 +39,7 @@
             {
                 if (item is Layer layer)
                 {
-                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
+                    RemoveLayerFromMap(layer);
                 }
             }
         }
@@ -48,11 +48,25 @@
         {
             foreach (var oldItem in args.OldItems)
                 if (oldItem is Layer layer)
-                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
+                    RemoveLayerFromMap(layer);
 
             foreach (var newItem in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, Map.Id, newItem as Layer);
+                AddLayerToMap(newItem as Layer);
         }
+    }
+
+    private ValueTask AddLayerToMap(Layer layer)
+    {
+        layer.JSRuntime = JsRuntime;
+        layer.MapId = Map.Id;
+        return LeafletInterops.AddLayer(JsRuntime, Map.Id, layer);
+    }
+
+    private ValueTask RemoveLayerFromMap(Layer layer)
+    {
+        layer.JSRuntime = null;
+        layer.MapId = null;
+        return LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
     }
 
 }
