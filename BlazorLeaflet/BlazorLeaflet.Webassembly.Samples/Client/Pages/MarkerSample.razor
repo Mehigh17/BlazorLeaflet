@@ -12,12 +12,12 @@
 <div class="form-inline m-2">
     <div class="form-group mb-2">
         <label>Lat </label>
-        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lat" disabled />
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lat" />
     </div>
 
     <div class="form-group mb-2">
         <label>Lng </label>
-        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lng" disabled />
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lng" />
     </div>
 </div>
 
@@ -47,49 +47,87 @@
             Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
         });
 
-        var marker = new Marker(_startAt)
+        Marker = new Marker(_startAt)
         {
             Draggable = true,
             Title = "Marker 1"
         };
 
-        Action<string> log = (string message) => Logger.Log($"{nameof(Marker)}.{message}");
+        Action<string> log = (string message) => Logger.Log($"{nameof(MarkerSample.Marker)}.{message}");
 
-        marker.OnAdd += (s, e) => log(nameof(marker.OnAdd));
-        marker.OnClick += (s, e) => log(nameof(marker.OnClick));
-        marker.OnContextMenu += (s, e) => log(nameof(marker.OnContextMenu));
-        marker.OnDblClick += (s, e) => log(nameof(marker.OnDblClick));
-        marker.OnDrag += (s, e) => log(nameof(marker.OnDrag));
-        marker.OnDragEnd += (s, e) => log(nameof(marker.OnDragEnd));
-        marker.OnDragStart += (s, e) => log(nameof(marker.OnDragStart));
-        marker.OnMouseDown += (s, e) => log(nameof(marker.OnMouseDown));
-        marker.OnMouseOut += (s, e) => log(nameof(marker.OnMouseOut));
-        marker.OnMouseOver += (s, e) => log(nameof(marker.OnMouseOver));
-        marker.OnMouseUp += (s, e) => log(nameof(marker.OnMouseUp));
-        marker.OnMove += (s, e) => log(nameof(marker.OnMove));
-        marker.OnMoveEnd += (s, e) => log(nameof(marker.OnMoveEnd));
-        marker.OnMoveStart += (s, e) => log(nameof(marker.OnMoveStart));
-        marker.OnRemove += (s, e) => log(nameof(marker.OnRemove));
-        marker.OnPopupClose += (s, e) => log(nameof(marker.OnPopupClose));
-        marker.OnPopupOpen += (s, e) => log(nameof(marker.OnPopupOpen));
-        marker.OnTooltipClose += (s, e) => log(nameof(marker.OnTooltipClose));
-        marker.OnTooltipOpen += (s, e) => log(nameof(marker.OnTooltipOpen));
+        Marker.OnAdd += (s, e) => log(nameof(Marker.OnAdd));
+        Marker.OnClick += (s, e) => log(nameof(Marker.OnClick));
+        Marker.OnContextMenu += (s, e) => log(nameof(Marker.OnContextMenu));
+        Marker.OnDblClick += (s, e) => log(nameof(Marker.OnDblClick));
+        Marker.OnDrag += (s, e) => log(nameof(Marker.OnDrag));
+        Marker.OnDragEnd += (s, e) => log(nameof(Marker.OnDragEnd));
+        Marker.OnDragStart += (s, e) => log(nameof(Marker.OnDragStart));
+        Marker.OnMouseDown += (s, e) => log(nameof(Marker.OnMouseDown));
+        Marker.OnMouseOut += (s, e) => log(nameof(Marker.OnMouseOut));
+        Marker.OnMouseOver += (s, e) => log(nameof(Marker.OnMouseOver));
+        Marker.OnMouseUp += (s, e) => log(nameof(Marker.OnMouseUp));
+        Marker.OnMove += (s, e) => log(nameof(Marker.OnMove));
+        Marker.OnMoveEnd += (s, e) => log(nameof(Marker.OnMoveEnd));
+        Marker.OnMoveStart += (s, e) => log(nameof(Marker.OnMoveStart));
+        Marker.OnRemove += (s, e) => log(nameof(Marker.OnRemove));
+        Marker.OnPopupClose += (s, e) => log(nameof(Marker.OnPopupClose));
+        Marker.OnPopupOpen += (s, e) => log(nameof(Marker.OnPopupOpen));
+        Marker.OnTooltipClose += (s, e) => log(nameof(Marker.OnTooltipClose));
+        Marker.OnTooltipOpen += (s, e) => log(nameof(Marker.OnTooltipOpen));
 
-        marker.OnMove += OnDrag;
+        Marker.OnMove += OnDrag;
 
-        _map.Layers.Add(marker);
+        _map.Layers.Add(Marker);
     }
 
     private void OnDrag(Marker marker, DragEvent evt)
     {
-        Lat = (float)evt.LatLng.Lat;
-        Lng = (float)evt.LatLng.Lng;
+        _lat = (float)evt.LatLng.Lat;
+        _lng = (float)evt.LatLng.Lng;
         StateHasChanged();
     }
 
-    private float Lat { get; set; } = 47.5574007f;
+    private Marker Marker { get; set; }
 
-    private float Lng { get; set; } = 16.3918687f;
+    private float _lat = 47.5574007f;
+
+    private float Lat
+    {
+        get
+        {
+            return _lat;
+        }
+        set
+        {
+            if (_lat != value)
+            {
+                Console.WriteLine("Lat_set: " + value);
+                _lat = value;
+                Marker.SetLatLng(new LatLng { Lat = (decimal)Lat, Lng = (decimal)Lng });
+                StateHasChanged();
+            }
+        }
+    }
+
+    private float _lng = 16.3918687f;
+
+    private float Lng
+    {
+        get
+        {
+            return _lng;
+        }
+        set
+        {
+            if(_lng != value)
+            {
+                _lng = value;
+                Console.WriteLine("Lat_set: " + value);
+                Marker.SetLatLng(new LatLng { Lat = (decimal)Lat, Lng = (decimal)Lng });
+                StateHasChanged();
+            }
+        }
+    }
 
     private PointF _startAt;
 
