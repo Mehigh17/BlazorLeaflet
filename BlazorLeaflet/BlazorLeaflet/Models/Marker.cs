@@ -89,8 +89,16 @@ namespace BlazorLeaflet.Models
 
         #region methods 
 
-        public ValueTask SetLatLng(LatLng latLng) => 
-            JSRuntime.InvokeVoidAsync($"{LeafletInterops.BaseObjectContainer}.{nameof(Marker)}.setLatLng", MapId, Id, latLng);
+        public ValueTask SetLatLng(LatLng latLng) 
+        {
+            Position = new PointF
+            {
+                X = (float)latLng.Lat,
+                Y = (float)latLng.Lng
+            };
+            return JSRuntime.InvokeVoidAsync($"{LeafletInterops.BaseObjectContainer}.{nameof(Marker)}.setLatLng", MapId, Id, latLng);
+        }
+            
 
         #endregion
 
