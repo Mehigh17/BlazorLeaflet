@@ -22,7 +22,7 @@ namespace BlazorLeaflet
             {
                 TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer, DotNetObjectReference.Create(tileLayer)),
                 Marker marker => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker, DotNetObjectReference.Create(marker)),
-                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addRectangle", mapId, rectangle, DotNetObjectReference.Create(rectangle)),
+                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addRectangle", mapId, rectangle.ActivateShapeLTRB(), DotNetObjectReference.Create(rectangle)),
                 Circle circle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addCircle", mapId, circle, DotNetObjectReference.Create(circle)),
                 Polygon polygon => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolygon", mapId, polygon, DotNetObjectReference.Create(polygon)),
                 Polyline polyline => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolyline", mapId, polyline, DotNetObjectReference.Create(polyline)),
@@ -43,6 +43,19 @@ namespace BlazorLeaflet
         public static ValueTask PanTo(IJSRuntime jsRuntime, string mapId, PointF position, bool animate, float duration, float easeLinearity, bool noMoveStart)
         {
             return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
+        }
+
+        /// <summary>
+        /// Calls the Rectangle.Shape's Left, Top, Bottom and Right getters once.
+        /// If this properties are not called at least once before passing it to javascript, they will not be present in the resulting js object.
+        /// </summary>
+        private static Rectangle ActivateShapeLTRB(this Rectangle rectangle)
+        {
+            _ = rectangle.Shape.Left;
+            _ = rectangle.Shape.Top;
+            _ = rectangle.Shape.Bottom;
+            _ = rectangle.Shape.Right;
+            return rectangle;
         }
 
     }
