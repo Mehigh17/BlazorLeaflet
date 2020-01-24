@@ -185,6 +185,13 @@ window.leafletBlazor = {
             easeLinearity: easeLinearity,
             noMoveStart: noMoveStart
         });
+    },
+
+    Marker: {
+        setLatLng: function (mapId, markerId, latLng) {
+            const marker = layers[mapId].find((layer) => layer.id === markerId);
+            marker.setLatLng(latLng);
+        }
     }
 };
 

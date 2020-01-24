@@ -3,6 +3,7 @@ using BlazorLeaflet.Utils;
 using Microsoft.JSInterop;
 using System;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace BlazorLeaflet.Models
 {
@@ -85,6 +86,13 @@ namespace BlazorLeaflet.Models
         {
             Position = position;
         }
+
+        #region methods 
+
+        public ValueTask SetLatLng(LatLng latLng) => 
+            JSRuntime.InvokeVoidAsync($"{LeafletInterops.BaseObjectContainer}.{nameof(Marker)}.setLatLng", MapId, Id, latLng);
+
+        #endregion
 
         #region events
 
