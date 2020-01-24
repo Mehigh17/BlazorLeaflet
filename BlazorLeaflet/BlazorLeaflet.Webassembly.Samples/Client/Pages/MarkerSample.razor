@@ -101,7 +101,6 @@
         {
             if (_lat != value)
             {
-                Console.WriteLine("Lat_set: " + value);
                 _lat = value;
                 Marker.SetLatLng(new LatLng { Lat = (decimal)Lat, Lng = (decimal)Lng });
                 StateHasChanged();
@@ -122,7 +121,6 @@
             if(_lng != value)
             {
                 _lng = value;
-                Console.WriteLine("Lat_set: " + value);
                 Marker.SetLatLng(new LatLng { Lat = (decimal)Lat, Lng = (decimal)Lng });
                 StateHasChanged();
             }
