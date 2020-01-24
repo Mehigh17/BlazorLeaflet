@@ -10,39 +10,39 @@ namespace BlazorLeaflet
     public static class LeafletInterops
     {
 
-        private static readonly string _BaseObjectContainer = "window.leafletBlazor";
+        internal static readonly string BaseObjectContainer = "window.leafletBlazor";
 
         public static ValueTask Create(IJSRuntime jsRuntime, string mapId, System.Drawing.PointF initCenterPosition, float initialZoom)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId, initCenterPosition, initialZoom);
+            return jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.create", mapId, initCenterPosition, initialZoom);
         }
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             layer switch
             {
-                TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer, DotNetObjectReference.Create(tileLayer)),
-                Marker marker => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker, DotNetObjectReference.Create(marker)),
-                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addRectangle", mapId, rectangle.ActivateShapeLTRB(), DotNetObjectReference.Create(rectangle)),
-                Circle circle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addCircle", mapId, circle, DotNetObjectReference.Create(circle)),
-                Polygon polygon => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolygon", mapId, polygon, DotNetObjectReference.Create(polygon)),
-                Polyline polyline => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolyline", mapId, polyline, DotNetObjectReference.Create(polyline)),
-                ImageLayer image => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addImageLayer", mapId, image, DotNetObjectReference.Create(image)),
+                TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addTilelayer", mapId, tileLayer, DotNetObjectReference.Create(tileLayer)),
+                Marker marker => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addMarker", mapId, marker, DotNetObjectReference.Create(marker)),
+                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addRectangle", mapId, rectangle.ActivateShapeLTRB(), DotNetObjectReference.Create(rectangle)),
+                Circle circle => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addCircle", mapId, circle, DotNetObjectReference.Create(circle)),
+                Polygon polygon => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addPolygon", mapId, polygon, DotNetObjectReference.Create(polygon)),
+                Polyline polyline => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addPolyline", mapId, polyline, DotNetObjectReference.Create(polyline)),
+                ImageLayer image => jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.addImageLayer", mapId, image, DotNetObjectReference.Create(image)),
                 _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
             };
 
         public static ValueTask RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId);
+            return jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.removeLayer", mapId, layerId);
         }
 
         public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
+            return jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
         }
 
         public static ValueTask PanTo(IJSRuntime jsRuntime, string mapId, PointF position, bool animate, float duration, float easeLinearity, bool noMoveStart)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
+            return jsRuntime.InvokeVoidAsync($"{BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
         }
 
         /// <summary>
