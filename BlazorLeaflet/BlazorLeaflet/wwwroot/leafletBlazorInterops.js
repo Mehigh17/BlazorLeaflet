@@ -103,6 +103,8 @@ window.leafletBlazor = {
         if (polygon.popup) {
             addPopup(layer, polygon.popup);
         }
+
+        connectPolygonEvents(layer, objectReference);
     },
     addRectangle: function (mapId, rectangle, objectReference) {
         const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
@@ -405,5 +407,9 @@ function connectPolylineEvents(polyLine, objectReference) {
 
 function connectRectangleEvents(rectangle, objectReference) {
     connectPolylineEvents(rectangle, objectReference);
+}
+
+function connectPolygonEvents(polygon, objectReference) {
+    connectPolylineEvents(polygon, objectReference);
 }
 // #endregion
