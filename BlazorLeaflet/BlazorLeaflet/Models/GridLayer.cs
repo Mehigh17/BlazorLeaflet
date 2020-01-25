@@ -26,6 +26,16 @@ namespace BlazorLeaflet.Models
         public int ZIndex { get; set; } = 1;
 
         /// <summary>
+        /// Minimum zoom number the tile source has available. If it is specified, the tiles on all zoom levels lower than minNativeZoom will be loaded from minNativeZoom level and auto-scaled.
+        /// </summary>
+        public double? MinNativeZoom { get; set; }
+
+        /// <summary>
+        ///  Maximum zoom number the tile source has available. If it is specified, the tiles on all zoom levels higher than maxNativeZoom will be loaded from maxNativeZoom level and auto-scaled.
+        /// </summary>
+        public double? MaxNativeZoom { get; set; }
+
+        /// <summary>
         /// If set, tiles will only be loaded inside the set.
         /// </summary>
         public Tuple<double, double> Bounds { get; set; }

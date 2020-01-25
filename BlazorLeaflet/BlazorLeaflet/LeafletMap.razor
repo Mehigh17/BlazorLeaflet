@@ -9,14 +9,24 @@
 
     [Parameter] public Map Map { get; set; }
     [Parameter] public PointF InitialPosition { get; set; } = PointF.Empty;
-    [Parameter] public float InitialZoom { get; set; } = 13f;
-
+    [Parameter] public float? InitialZoom { get; set; } = 13f;
+    [Parameter] public float? MaxZoom { get; set; }
+    [Parameter] public float? MinZoom { get; set; }
+    [Parameter] public PredefinedCRS CRS { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LeafletInterops.Create(JsRuntime, Map.Id, InitialPosition, InitialZoom);
+            var args = new MapArgs
+            {
+                Center = InitialPosition,
+                Zoom = InitialZoom,
+                MaxZoom = MaxZoom,
+                MinZoom = MinZoom,
+                CRS = CRS.ToString()
+            };
+            await LeafletInterops.Create(JsRuntime, Map.Id, args);
 
             Map.Layers.CollectionChanged += OnLayersChanged;
             foreach (var layer in Map.Layers.ToList())

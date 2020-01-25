@@ -9,14 +9,18 @@ namespace BlazorLeaflet
 {
     public static class LeafletInterops
     {
-
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, string mapId, System.Drawing.PointF initCenterPosition, float initialZoom)
+        public static ValueTask Create(IJSRuntime jsRuntime, string mapId, MapArgs args)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId, initCenterPosition, initialZoom);
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId, args, DotNetObjectReference.Create(args));
         }
 
+        public static ValueTask<bool> IsLoaded(IJSRuntime jsRuntime, string mapId)
+        {
+            return jsRuntime.InvokeAsync<bool>($"{_BaseObjectContainer}.isLoaded", mapId);
+        }
+        
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             layer switch
             {
@@ -44,6 +48,10 @@ namespace BlazorLeaflet
         {
             return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
         }
-
+        
+        public static ValueTask SetMaxBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2)
+        {
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.setMaxBounds", mapId, corner1, corner2);
+        }
     }
 }

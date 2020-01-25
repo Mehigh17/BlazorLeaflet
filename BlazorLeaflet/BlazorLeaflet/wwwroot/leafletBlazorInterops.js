@@ -1,15 +1,36 @@
 ﻿maps = {};
 layers = {};
 
-window.leafletBlazor = {
-    create: function (mapId, initPosition, initZoom) {
-        var map = L.map(mapId, {
-            center: [initPosition.x, initPosition.y],
-            zoom: initZoom
-        });
+L.CRS.SimpleXY = L.extend({}, L.CRS.Simple, { transformation: new L.Transformation(1, 0, 1, 0)});
 
-        maps[mapId] = map;
+const predefinedCRS = Object.freeze({
+    EPSG3857: L.CRS.EPSG3857,
+    EPSG4326: L.CRS.EPSG4326,
+    EPSG3395: L.CRS.EPSG3395,
+    Simple: L.CRS.Simple,
+    SimpleXY: L.CRS.SimpleXY,
+});
+
+window.leafletBlazor = {
+    create: function (mapId, args) {
+        let nativeArgs = {
+            center: [args.center.x, args.center.y],
+            zoom: args.zoom ? args.zoom : undefined,
+            minZoom: args.minZoom ? args.minZoom : undefined,
+            maxZoom: args.maxZoom ? args.maxZoom : undefined,
+        };
+        
+        if (predefinedCRS[args.crs]){
+            nativeArgs.crs = predefinedCRS[args.crs];
+        } else {
+            throw `Unknown CRS: ${args.crs}, known CRS: ${JSON.stringify(predefinedCRS)}`;
+        }
+        maps[mapId] = L.map(mapId, nativeArgs);
         layers[mapId] = [];
+    },
+    isLoaded: function (mapId) {
+        return !!maps[mapId];
+        
     },
     addTilelayer: function (mapId, tileLayer, objectReference) {
         const layer = L.tileLayer(tileLayer.urlTemplate, {
@@ -25,6 +46,8 @@ window.leafletBlazor = {
             // ---
             minZoom: tileLayer.minimumZoom,
             maxZoom: tileLayer.maximumZoom,
+            minNativeZoom: tileLayer.minNativeZoom ? tileLayer.minNativeZoom : undefined,
+            maxNativeZoom: tileLayer.maxNativeZoom ? tileLayer.maxNativeZoom : undefined,
             subdomains: tileLayer.subdomains,
             errorTileUrl: tileLayer.errorTileUrl,
             zoomOffset: tileLayer.zoomOffset,
@@ -175,6 +198,12 @@ window.leafletBlazor = {
             easeLinearity: easeLinearity,
             noMoveStart: noMoveStart
         });
+    },
+    setMaxBounds: function (mapId, corner1, corner2) {
+        const corner1LL = L.latLng(corner1.x, corner1.y);
+        const corner2LL = L.latLng(corner2.x, corner2.y);
+        const mapBounds = L.latLngBounds(corner1LL, corner2LL);
+        maps[mapId].setMaxBounds(mapBounds);
     }
 };
 
