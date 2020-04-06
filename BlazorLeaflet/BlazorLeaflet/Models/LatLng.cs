@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Drawing;
 
 namespace BlazorLeaflet.Models
 {
     public class LatLng
     {
-        public decimal Lat { get; set; }
+        public float Lat { get; set; }
 
-        public decimal Lng { get; set; }
+        public float Lng { get; set; }
 
-        public decimal Alt { get; set; }
+        public float Alt { get; set; }
+
+        public PointF ToPointF() => new PointF(Lat, Lng);
     }
 }

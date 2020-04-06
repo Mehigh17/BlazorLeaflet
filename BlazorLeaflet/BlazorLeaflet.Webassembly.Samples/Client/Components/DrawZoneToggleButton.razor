@@ -1,0 +1,36 @@
+﻿@using Data
+@implements IDisposable
+
+<a class="@toggleClass" @onclick="ToggleClicked">@ButtonText</a>
+
+@code {
+    [Parameter] public string ButtonText { get; set; }
+    [Parameter] public DrawHandler DrawHandler { get; set; }
+    [Parameter] public EventCallback<bool> OnToggleCallback { get; set; }
+
+    string toggleClass = "my-toggle-button";
+
+    protected override void OnInitialized()
+    {
+        DrawHandler.DrawFinished += OnDrawFinished;
+        base.OnInitialized();
+    }
+
+    async Task ToggleClicked()
+    {
+        var isToggled = toggleClass.Equals("my-toggle-button");
+        toggleClass = isToggled ? "my-toggle-button-down" : "my-toggle-button";
+        await OnToggleCallback.InvokeAsync(isToggled);
+    }
+
+    void OnDrawFinished(object sender, EventArgs e)
+    {
+        toggleClass = "my-toggle-button";
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        DrawHandler.DrawFinished -= OnDrawFinished;
+    }
+}

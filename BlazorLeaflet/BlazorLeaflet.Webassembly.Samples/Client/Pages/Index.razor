@@ -3,6 +3,7 @@
 @using System.Drawing
 @using BlazorLeaflet.Models
 @using BlazorLeaflet.Models.Events
+@using Data;
 @inject IJSRuntime jsRuntime
 
 <h1>Blazor Leaflet </h1>
@@ -25,16 +26,24 @@
     <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
 </div>
 
+<div class="pt-3">
+    <DrawZoneToggleButton ButtonText="Draw Rectangle" DrawHandler="_drawHandler" OnToggleCallback="_drawHandler.OnDrawRectangleToggle" />
+    <DrawZoneToggleButton ButtonText="Draw Circle" DrawHandler="_drawHandler" OnToggleCallback="_drawHandler.OnDrawCircleToggle" />
+    <DrawZoneToggleButton ButtonText="Draw Polygon" DrawHandler="_drawHandler" OnToggleCallback="_drawHandler.OnDrawPolygonToggle" />
+</div>
+
 @code
 {
 
     private Map _map;
+    private DrawHandler _drawHandler;
 
     protected override void OnInitialized()
     {
         _startAt = new PointF(Lat, Lng);
 
         _map = new Map(jsRuntime);
+        _drawHandler = new DrawHandler(_map);
 
         _map.Layers.Add(new TileLayer
         {
@@ -53,7 +62,7 @@
         // marker.OnClick += (s, e) => Console.WriteLine("OnClick");
 
         marker.OnMove += OnDrag;
-        
+
         // marker.OnDrag += OnDrag;
 
         _map.Layers.Add(marker);
@@ -61,8 +70,8 @@
 
     private void OnDrag(Marker marker, DragEvent evt)
     {
-        Lat = (float)evt.LatLng.Lat;
-        Lng = (float)evt.LatLng.Lng;
+        Lat = evt.LatLng.Lat;
+        Lng = evt.LatLng.Lng;
         StateHasChanged();
     }
 

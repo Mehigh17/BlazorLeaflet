@@ -117,6 +117,22 @@ app {
     color: red;
 }
 
+.my-toggle-button {
+    background-color: whitesmoke;
+    border: 1px solid darkgray;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px 5px;
+}
+
+.my-toggle-button-down {
+    background-color: gray;
+    border: 2px solid black;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px 5px;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
