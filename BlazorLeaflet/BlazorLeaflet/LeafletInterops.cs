@@ -12,9 +12,9 @@ namespace BlazorLeaflet
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, string mapId, System.Drawing.PointF initCenterPosition, float initialZoom)
+        public static ValueTask Create(IJSRuntime jsRuntime, Map map, PointF initCenterPosition, float initialZoom)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", mapId, initCenterPosition, initialZoom);
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", map, initCenterPosition, initialZoom, DotNetObjectReference.Create(map));
         }
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer) =>

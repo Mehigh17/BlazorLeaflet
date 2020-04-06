@@ -2,14 +2,15 @@
 layers = {};
 
 window.leafletBlazor = {
-    create: function (mapId, initPosition, initZoom) {
-        var map = L.map(mapId, {
+    create: function (map, initPosition, initZoom, objectReference) {
+        var leafletMap = L.map(map.id, {
             center: [initPosition.x, initPosition.y],
             zoom: initZoom
         });
 
-        maps[mapId] = map;
-        layers[mapId] = [];
+        connectMapEvents(leafletMap, objectReference);
+        maps[map.id] = leafletMap;
+        layers[map.id] = [];
     },
     addTilelayer: function (mapId, tileLayer, objectReference) {
         const layer = L.tileLayer(tileLayer.urlTemplate, {
@@ -33,7 +34,7 @@ window.leafletBlazor = {
             detectRetina: tileLayer.detectRetina,
             // crossOrigin
         });
-        layer.addTo(maps[mapId]);
+        addLayer(mapId, layer, tileLayer.id);
     },
     addMarker: function (mapId, marker, objectReference) {
         var options = {
@@ -57,8 +58,7 @@ window.leafletBlazor = {
             options.icon = createIcon(marker.icon);
         }
 
-        const mkr = L.marker([marker.position.x, marker.position.y], options).addTo(maps[mapId]);
-        mkr.id = marker.id;
+        const mkr = L.marker([marker.position.x, marker.position.y], options);
 
         if (marker.tooltip) {
             addTooltip(mkr, marker.tooltip);
@@ -68,15 +68,14 @@ window.leafletBlazor = {
             addPopup(mkr, marker.popup);
         }
 
-        layers[mapId].push(mkr);
+        addLayer(mapId, mkr, marker.id);
 
         connectMarkerEvents(mkr, objectReference);
     },
     addPolyline: function (mapId, polyline, objectReference) {
         const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
 
-        layers[mapId].push(layer);
-        layer.addTo(maps[mapId]);
+        addLayer(mapId, layer, polyline.id);
 
         if (polyline.tooltip) {
             addTooltip(layer, polyline.tooltip);
@@ -89,8 +88,7 @@ window.leafletBlazor = {
     addPolygon: function (mapId, polygon, objectReference) {
         const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
 
-        layers[mapId].push(layer);
-        layer.addTo(maps[mapId]);
+        addLayer(mapId, layer, polygon.id);
 
         if (polygon.tooltip) {
             addTooltip(layer, polygon.tooltip);
@@ -103,8 +101,7 @@ window.leafletBlazor = {
     addRectangle: function (mapId, rectangle, objectReference) {
         const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
 
-        layers[mapId].push(layer);
-        layer.addTo(maps[mapId]);
+        addLayer(mapId, layer, rectangle.id);
 
         if (rectangle.tooltip) {
             addTooltip(layer, rectangle.tooltip);
@@ -121,8 +118,7 @@ window.leafletBlazor = {
                 radius: circle.radius
             });
 
-        layers[mapId].push(layer);
-        layer.addTo(maps[mapId]);
+        addLayer(mapId, layer, circle.id);
 
         if (circle.tooltip) {
             addTooltip(layer, circle.tooltip);
@@ -148,8 +144,7 @@ window.leafletBlazor = {
         const bounds = L.latLngBounds(corner1, corner2);
 
         const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
-        layers[mapId].push(imgLayer);
-        imgLayer.addTo(maps[mapId]);
+        addLayer(mapId, imgLayer);
     },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
@@ -280,6 +275,12 @@ function addPopup(layerObj, popup) {
     });
 }
 
+function addLayer(mapId, layer, layerId) {
+    layer.id = layerId;
+    layers[mapId].push(layer);
+    layer.addTo(maps[mapId]);
+}
+
 // #region events
 
 // removes properties that can cause circular references
@@ -315,6 +316,30 @@ function mapEvents(mapElement, objectReference, eventHandlerDict) {
     }
 }
 
+function connectMapEvents(map, objectReference) {
+
+    connectInteractionEvents(map, objectReference);
+
+    mapEvents(map, objectReference, {
+        "zoomlevelschange": "NotifyZoomLevelsChange",
+        "resize": "NotifyResize",
+        "unload": "NotifyUnload",
+        "viewreset": "NotifyViewReset",
+        "load": "NotifyLoad",
+        "zoomstart": "NotifyZoomStart",
+        "movestart": "NotifyMoveStart",
+        "zoom": "NotifyZoom",
+        "move": "NotifyMove",
+        "zoomend": "NotifyZoomEnd",
+        "moveend": "NotifyMoveEnd",
+        "mousemove": "NotifyMouseMove",
+        "keypress": "NotifyKeyPress",
+        "keydown": "NotifyKeyDown",
+        "keyup": "NotifyKeyUp",
+        "preclick": "NotifyPreClick",
+    });
+}
+
 function connectLayerEvents(layer, objectReference) {
     mapEvents(layer, objectReference, {
         "add": "NotifyAdd",
@@ -329,16 +354,7 @@ function connectLayerEvents(layer, objectReference) {
 function connectInteractiveLayerEvents(interactiveLayer, objectReference) {
 
     connectLayerEvents(interactiveLayer, objectReference);
-
-    mapEvents(interactiveLayer, objectReference, {
-        "click": "NotifyClick",
-        "dblclick": "NotifyDblClick",
-        "mousedown": "NotifyMouseDown",
-        "mouseup": "NotifyMouseUp",
-        "mouseover": "NotifyMouseOver",
-        "mouseout": "NotifyMouseOut",
-        "contextmenu": "NotifyContextMenu",
-    });
+    connectInteractionEvents(interactiveLayer, objectReference);
 }
 
 function connectMarkerEvents(marker, objectReference) {
@@ -352,6 +368,19 @@ function connectMarkerEvents(marker, objectReference) {
         "drag": "NotifyDrag",
         "dragend": "NotifyDragEnd",
         "moveend": "NotifyMoveEnd",
+    });
+}
+
+function connectInteractionEvents(interactiveObject, objectReference) {
+
+    mapEvents(interactiveObject, objectReference, {
+        "click": "NotifyClick",
+        "dblclick": "NotifyDblClick",
+        "mousedown": "NotifyMouseDown",
+        "mouseup": "NotifyMouseUp",
+        "mouseover": "NotifyMouseOver",
+        "mouseout": "NotifyMouseOut",
+        "contextmenu": "NotifyContextMenu",
     });
 }
 

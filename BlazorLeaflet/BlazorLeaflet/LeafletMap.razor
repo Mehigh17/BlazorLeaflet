@@ -16,7 +16,7 @@
     {
         if (firstRender)
         {
-            await LeafletInterops.Create(JsRuntime, Map.Id, InitialPosition, InitialZoom);
+            await LeafletInterops.Create(JsRuntime, Map, InitialPosition, InitialZoom);
 
             Map.Layers.CollectionChanged += OnLayersChanged;
             foreach (var layer in Map.Layers.ToList())
