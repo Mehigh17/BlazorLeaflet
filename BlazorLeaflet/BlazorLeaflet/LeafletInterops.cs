@@ -19,6 +19,8 @@ namespace BlazorLeaflet
             layer switch
             {
                 TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer, DotNetObjectReference.Create(tileLayer)),
+                MbTilesLayer mbTilesLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMbTilesLayer", mapId, mbTilesLayer, DotNetObjectReference.Create(mbTilesLayer)),
+                ShapefileLayer shapefileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addShapefileLayer", mapId, shapefileLayer, DotNetObjectReference.Create(shapefileLayer)),
                 Marker marker => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarker", mapId, marker, DotNetObjectReference.Create(marker)),
                 Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addRectangle", mapId, rectangle, DotNetObjectReference.Create(rectangle)),
                 Circle circle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addCircle", mapId, circle, DotNetObjectReference.Create(circle)),

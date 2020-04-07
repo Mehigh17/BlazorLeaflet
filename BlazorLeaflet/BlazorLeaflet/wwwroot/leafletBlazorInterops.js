@@ -39,6 +39,18 @@ window.leafletBlazor = {
         });
         addLayer(mapId, layer, tileLayer.id);
     },
+    addMbTilesLayer: function (mapId, mbTilesLayer, objectReference) {
+        const layer = L.tileLayer.mbTiles(mbTilesLayer.urlTemplate, {
+            attribution: mbTilesLayer.attribution,
+            minZoom: mbTilesLayer.minimumZoom,
+            maxZoom: mbTilesLayer.maximumZoom
+        });
+        addLayer(mapId, layer, mbTilesLayer.id);
+    },
+    addShapefileLayer: function (mapId, shapefileLayer, objectReference) {
+        const layer = L.shapefile(shapefileLayer.urlTemplate);
+        addLayer(mapId, layer, shapefileLayer.id);
+    },
     addMarker: function (mapId, marker, objectReference) {
         var options = {
             ...createInteractiveLayer(marker),
