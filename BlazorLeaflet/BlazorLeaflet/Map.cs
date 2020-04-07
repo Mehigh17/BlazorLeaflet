@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using Microsoft.JSInterop;
 using BlazorLeaflet.Models.Events;
+using System.Threading.Tasks;
 
 namespace BlazorLeaflet
 {
@@ -39,7 +40,7 @@ namespace BlazorLeaflet
         /// geographical bounds, bouncing the user back if the user tries to pan
         /// outside the view. 
         /// </summary>
-        public Tuple<float, float> MaxBounds { get; set; }
+        public Tuple<LatLng, LatLng> MaxBounds { get; set; }
 
         public string Id { get; }
         public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
@@ -61,6 +62,9 @@ namespace BlazorLeaflet
         {
             LeafletInterops.PanTo(_jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
         }
+
+        public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
+        public async Task<float> GetZoom() => await LeafletInterops.GetZoom(_jsRuntime, Id);
 
         #region events
 

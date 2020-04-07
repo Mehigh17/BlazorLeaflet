@@ -8,7 +8,7 @@ window.leafletBlazor = {
             zoom: map.zoom,
             minZoom: map.minZoom ? map.minZoom : undefined,
             maxZoom: map.maxZoom ? map.maxZoom : undefined,
-            maxBounds: map.maxBounds ? L.latLngBounds(map.maxBounds.item1, map.maxBounds.item2) : undefined,
+            maxBounds: map.maxBounds && map.maxBounds.item1 && map.maxBounds.item2 ? L.latLngBounds(map.maxBounds.item1, map.maxBounds.item2) : undefined,
         });
 
         connectMapEvents(leafletMap, objectReference);
@@ -25,7 +25,7 @@ window.leafletBlazor = {
             updateWhenZooming: tileLayer.updateWhenZooming,
             updateInterval: tileLayer.updateInterval,
             zIndex: tileLayer.zIndex,
-            bounds: tileLayer.bounds ? L.latLngBounds(tileLayer.bounds.item1, tileLayer.bounds.item2) : undefined,
+            bounds: tileLayer.bounds && tileLayer.bounds.item1 && tileLayer.bounds.item2 ? L.latLngBounds(tileLayer.bounds.item1, tileLayer.bounds.item2) : undefined,
             // ---
             minZoom: tileLayer.minimumZoom,
             maxZoom: tileLayer.maximumZoom,

@@ -28,7 +28,7 @@ namespace BlazorLeaflet.Models
         /// <summary>
         /// If set, tiles will only be loaded inside the set.
         /// </summary>
-        public Tuple<float, float> Bounds { get; set; }
+        public Tuple<LatLng, LatLng> Bounds { get; set; }
 
     }
 }
