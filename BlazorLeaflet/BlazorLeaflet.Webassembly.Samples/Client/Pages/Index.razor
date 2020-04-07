@@ -13,17 +13,17 @@
 <div class="form-inline m-2">
     <div class="form-group mb-2">
         <label>Lat </label>
-        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lat" disabled />
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="_markerLatLng.Lat" disabled />
     </div>
 
     <div class="form-group mb-2">
         <label>Lng </label>
-        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="Lng" disabled />
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="_markerLatLng.Lng" disabled />
     </div>
 </div>
 
 <div style="height: 500px; width: 500px;">
-    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" InitialPosition="_markerLatLng.ToPointF()" InitialZoom="4.8f" />
 </div>
 
 <div class="pt-3">
@@ -34,16 +34,14 @@
 
 @code
 {
-
     private Map _map;
     private DrawHandler _drawHandler;
+    private LatLng _markerLatLng = new LatLng { Lat = 47.5574007f, Lng = 16.3918687f };
 
     protected override void OnInitialized()
     {
-        _startAt = new PointF(Lat, Lng);
-
         _map = new Map(jsRuntime);
-        _drawHandler = new DrawHandler(_map);
+        _drawHandler = new DrawHandler(_map, jsRuntime);
 
         _map.Layers.Add(new TileLayer
         {
@@ -51,10 +49,12 @@
             Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
         });
 
-        var marker = new Marker(_startAt)
+        var marker = new Marker(_markerLatLng)
         {
             Draggable = true,
-            Title = "Marker 1"
+            Title = "Marker 1",
+            Popup = new Popup { Content = string.Format("I am at {0:0.00}° lat, {1:0.00}° lng", _markerLatLng.Lat, _markerLatLng.Lng) },
+            Tooltip = new Tooltip { Content = "Click and drag to move me" }
         };
 
         // marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
@@ -62,6 +62,7 @@
         // marker.OnClick += (s, e) => Console.WriteLine("OnClick");
 
         marker.OnMove += OnDrag;
+        marker.OnMoveEnd += OnDragEnd;
 
         // marker.OnDrag += OnDrag;
 
@@ -70,15 +71,14 @@
 
     private void OnDrag(Marker marker, DragEvent evt)
     {
-        Lat = evt.LatLng.Lat;
-        Lng = evt.LatLng.Lng;
+        _markerLatLng = evt.LatLng;
         StateHasChanged();
     }
 
-    private float Lat { get; set; } = 47.5574007f;
-
-    private float Lng { get; set; } = 16.3918687f;
-
-    private PointF _startAt;
-
+    private async void OnDragEnd(Marker marker, Event e)
+    {
+        marker.Position = _markerLatLng;
+        marker.Popup.Content = string.Format("I am now at {0:0.00}° lat, {1:0.00}° lng", _markerLatLng.Lat, _markerLatLng.Lng);
+        await LeafletInterops.UpdatePopupContent(jsRuntime, _map.Id, marker);
+    }
 }

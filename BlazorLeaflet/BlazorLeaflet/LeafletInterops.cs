@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Rectangle = BlazorLeaflet.Models.Rectangle;
 
@@ -30,10 +31,24 @@ namespace BlazorLeaflet
                 _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
             };
 
-        public static ValueTask RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId);
-        }
+        public static ValueTask RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId);
+
+        public static ValueTask UpdatePopupContent(IJSRuntime jsRuntime, string mapId, Layer layer) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updatePopupContent", mapId, layer.Id, layer.Popup?.Content);
+
+        public static ValueTask UpdateTooltipContent(IJSRuntime jsRuntime, string mapId, Layer layer) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateTooltipContent", mapId, layer.Id, layer.Tooltip?.Content);
+
+        public static ValueTask UpdateShape(IJSRuntime jsRuntime, string mapId, Layer layer) =>
+            layer switch
+            {
+                Rectangle rectangle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateRectangle", mapId, rectangle),
+                Circle circle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateCircle", mapId, circle),
+                Polygon polygon => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updatePolygon", mapId, polygon),
+                Polyline polyline => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updatePolyline", mapId, polyline),
+                _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
+            };
 
         public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom)
         {

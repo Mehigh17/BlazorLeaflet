@@ -57,75 +57,58 @@ window.leafletBlazor = {
         if (marker.icon !== null) {
             options.icon = createIcon(marker.icon);
         }
-
-        const mkr = L.marker([marker.position.x, marker.position.y], options);
-
-        if (marker.tooltip) {
-            addTooltip(mkr, marker.tooltip);
-        }
-
-        if (marker.popup) {
-            addPopup(mkr, marker.popup);
-        }
-
-        addLayer(mapId, mkr, marker.id);
-
+        const mkr = L.marker(marker.position, options);
         connectMarkerEvents(mkr, objectReference);
+        addLayer(mapId, mkr, marker.id);
+        setTooltipAndPopupIfDefined(marker, mkr);
     },
     addPolyline: function (mapId, polyline, objectReference) {
         const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
-
         addLayer(mapId, layer, polyline.id);
-
-        if (polyline.tooltip) {
-            addTooltip(layer, polyline.tooltip);
-        }
-
-        if (polyline.popup) {
-            addPopup(layer, polyline.popup);
+        setTooltipAndPopupIfDefined(polyline, layer);
+    },
+    updatePolyline: function (mapId, polyline) {
+        let layer = layers[mapId].find(l => l.id === polyline.id);
+        if (layer !== undefined) {
+            layer.setLatLngs(shapeToLatLngArray(polyline.shape));
         }
     },
     addPolygon: function (mapId, polygon, objectReference) {
         const layer = L.polygon(shapeToLatLngArray(polygon.shape), createPolyline(polygon));
-
         addLayer(mapId, layer, polygon.id);
-
-        if (polygon.tooltip) {
-            addTooltip(layer, polygon.tooltip);
-        }
-
-        if (polygon.popup) {
-            addPopup(layer, polygon.popup);
+        setTooltipAndPopupIfDefined(polygon, layer);
+    },
+    updatePolygon: function (mapId, polygon) {
+        let layer = layers[mapId].find(l => l.id === polygon.id);
+        if (layer !== undefined) {
+            layer.setLatLngs(shapeToLatLngArray(polygon.shape));
         }
     },
     addRectangle: function (mapId, rectangle, objectReference) {
         const layer = L.rectangle([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]], createPolyline(rectangle));
-
         addLayer(mapId, layer, rectangle.id);
-
-        if (rectangle.tooltip) {
-            addTooltip(layer, rectangle.tooltip);
-        }
-
-        if (rectangle.popup) {
-            addPopup(layer, rectangle.popup);
+        setTooltipAndPopupIfDefined(rectangle, layer);
+    },
+    updateRectangle: function (mapId, rectangle) {
+        let layer = layers[mapId].find(l => l.id === rectangle.id);
+        if (layer !== undefined) {
+            layer.setBounds([[rectangle.shape.bottom, rectangle.shape.left], [rectangle.shape.top, rectangle.shape.right]]);
         }
     },
     addCircle: function (mapId, circle, objectReference) {
-        const layer = L.circle([circle.position.x, circle.position.y],
+        const layer = L.circle(circle.position,
             {
                 ...createPath(circle),
                 radius: circle.radius
             });
-
         addLayer(mapId, layer, circle.id);
-
-        if (circle.tooltip) {
-            addTooltip(layer, circle.tooltip);
-        }
-
-        if (circle.popup) {
-            addPopup(layer, circle.popup);
+        setTooltipAndPopupIfDefined(circle, layer);
+    },
+    updateCircle: function (mapId, circle) {
+        let layer = layers[mapId].find(l => l.id === circle.id);
+        if (layer !== undefined) {
+            layer.setRadius(circle.radius);
+            layer.setLatLng(circle.position);
         }
     },
     addImageLayer: function (mapId, image, objectReference) {
@@ -152,6 +135,24 @@ window.leafletBlazor = {
         layers[mapId] = remainingLayers;
 
         layersToBeRemoved.forEach(m => m.removeFrom(maps[mapId]));
+    },
+    updatePopupContent: function (mapId, layerId, content) {
+        let layer = layers[mapId].find(l => l.id === layerId);
+        if (layer !== undefined) {
+            var popup = layer.getPopup();
+            if (popup !== undefined) {
+                popup.setContent(content);
+            }
+        }
+    },
+    updateTooltipContent: function (mapId, layerId, content) {
+        let layer = layers[mapId].find(l => l.id === layerId);
+        if (layer !== undefined) {
+            var tooltip = layer.getTooltip();
+            if (tooltip !== undefined) {
+                tooltip.setContent(content);
+            }
+        }
     },
     fitBounds: function (mapId, corner1, corner2, padding, maxZoom) {
         const corner1LL = L.latLng(corner1.x, corner1.y);
@@ -246,6 +247,24 @@ function getColorString(color) {
     return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
 }
 
+function unbindTooltipAndPopupIfDefined(layer) {
+    if (layer.getTooltip()) {
+        layer.unbindTooltip();
+    }
+    if (layer.getPopup()) {
+        layer.unbindPopup();
+    }
+}
+
+function setTooltipAndPopupIfDefined(layer, jsLayer) {
+    if (layer.tooltip) {
+        addTooltip(jsLayer, layer.tooltip);
+    }
+    if (layer.popup) {
+        addPopup(jsLayer, layer.popup);
+    }
+}
+
 function addTooltip(layerObj, tooltip) {
     layerObj.bindTooltip(tooltip.content,
         {
@@ -290,7 +309,9 @@ function cleanupEventArgsForSerialization(eventArgs) {
         "target",
         "sourceTarget",
         "propagatedFrom",
-        "originalEvent"
+        "originalEvent",
+        "tooltip",
+        "popup"
     ];
 
     const copy = {};
