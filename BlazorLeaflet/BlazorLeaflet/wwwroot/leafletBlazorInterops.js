@@ -174,6 +174,12 @@ window.leafletBlazor = {
             easeLinearity: easeLinearity,
             noMoveStart: noMoveStart
         });
+    },
+    getCenter: function (mapId) {
+        return maps[mapId].getCenter();
+    },
+    getZoom: function (mapId) {
+        return maps[mapId].getZoom();
     }
 };
 

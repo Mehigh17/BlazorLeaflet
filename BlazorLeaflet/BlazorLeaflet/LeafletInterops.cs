@@ -12,10 +12,8 @@ namespace BlazorLeaflet
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, Map map)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", map, DotNetObjectReference.Create(map));
-        }
+        public static ValueTask Create(IJSRuntime jsRuntime, Map map) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", map, DotNetObjectReference.Create(map));
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             layer switch
@@ -49,15 +47,16 @@ namespace BlazorLeaflet
                 _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
             };
 
-        public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
-        }
+        public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
 
-        public static ValueTask PanTo(IJSRuntime jsRuntime, string mapId, PointF position, bool animate, float duration, float easeLinearity, bool noMoveStart)
-        {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
-        }
+        public static ValueTask PanTo(IJSRuntime jsRuntime, string mapId, PointF position, bool animate, float duration, float easeLinearity, bool noMoveStart) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
 
+        public static ValueTask<LatLng> GetCenter(IJSRuntime jsRuntime, string mapId) =>
+            jsRuntime.InvokeAsync<LatLng>($"{_BaseObjectContainer}.getCenter", mapId);
+
+        public static ValueTask<float> GetZoom(IJSRuntime jsRuntime, string mapId) =>
+            jsRuntime.InvokeAsync<float>($"{_BaseObjectContainer}.getZoom", mapId);
     }
 }
