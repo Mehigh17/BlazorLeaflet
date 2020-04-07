@@ -11,12 +11,12 @@
         /// <summary>
         /// The minimum zoom level down to which this layer will be displayed (inclusive).
         /// </summary>
-        public double MinimumZoom { get; set; }
+        public float MinimumZoom { get; set; }
 
         /// <summary>
         /// The maximum zoom level up to which this layer will be displayed (inclusive).
         /// </summary>
-        public double MaximumZoom { get; set; } = 18;
+        public float MaximumZoom { get; set; } = 18;
 
         /// <summary>
         /// Subdomains of the tile service.

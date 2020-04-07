@@ -2,7 +2,6 @@
 using Microsoft.JSInterop;
 using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Rectangle = BlazorLeaflet.Models.Rectangle;
 
@@ -13,9 +12,9 @@ namespace BlazorLeaflet
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
-        public static ValueTask Create(IJSRuntime jsRuntime, Map map, PointF initCenterPosition, float initialZoom)
+        public static ValueTask Create(IJSRuntime jsRuntime, Map map)
         {
-            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", map, initCenterPosition, initialZoom, DotNetObjectReference.Create(map));
+            return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.create", map, DotNetObjectReference.Create(map));
         }
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer) =>

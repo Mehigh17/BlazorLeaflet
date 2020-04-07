@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using System.Collections.ObjectModel
 @using System.Drawing
 @using BlazorLeaflet.Models
 @using BlazorLeaflet.Samples.Data
@@ -19,7 +18,7 @@
 </div>
 
 <div style="height: 500px; width: 500px;">
-    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" />
 </div>
 
 @code
@@ -29,7 +28,11 @@
 
     protected override void OnInitialized()
     {
-        _map = new Map(jsRuntime);
+        _map = new Map(jsRuntime)
+        {
+            Center = _startAt,
+            Zoom = 4.8f
+        };
 
         _map.Layers.Add(new TileLayer
         {
@@ -69,7 +72,7 @@
         });
     }
 
-    private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
+    private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
     public string CityName { get; set; }
 
 

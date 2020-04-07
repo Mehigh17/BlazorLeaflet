@@ -1,5 +1,4 @@
-﻿@using System.Drawing
-@using System.Threading.Tasks
+﻿@using System.Threading.Tasks
 @using Microsoft.AspNetCore.Components
 @inject IJSRuntime JsRuntime
 
@@ -8,15 +7,13 @@
 @code {
 
     [Parameter] public Map Map { get; set; }
-    [Parameter] public PointF InitialPosition { get; set; } = PointF.Empty;
-    [Parameter] public float InitialZoom { get; set; } = 13f;
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LeafletInterops.Create(JsRuntime, Map, InitialPosition, InitialZoom);
+            await LeafletInterops.Create(JsRuntime, Map);
 
             Map.Layers.CollectionChanged += OnLayersChanged;
             foreach (var layer in Map.Layers.ToList())

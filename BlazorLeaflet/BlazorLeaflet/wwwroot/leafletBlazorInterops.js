@@ -2,10 +2,13 @@
 layers = {};
 
 window.leafletBlazor = {
-    create: function (map, initPosition, initZoom, objectReference) {
+    create: function (map, objectReference) {
         var leafletMap = L.map(map.id, {
-            center: [initPosition.x, initPosition.y],
-            zoom: initZoom
+            center: map.center,
+            zoom: map.zoom,
+            minZoom: map.minZoom ? map.minZoom : undefined,
+            maxZoom: map.maxZoom ? map.maxZoom : undefined,
+            maxBounds: map.maxBounds ? L.latLngBounds(map.maxBounds.item1, map.maxBounds.item2) : undefined,
         });
 
         connectMapEvents(leafletMap, objectReference);
@@ -22,7 +25,7 @@ window.leafletBlazor = {
             updateWhenZooming: tileLayer.updateWhenZooming,
             updateInterval: tileLayer.updateInterval,
             zIndex: tileLayer.zIndex,
-            bounds: tileLayer.bounds ? L.latLng((parseFloat(tileLayer.bounds.item1), parseFloat(tileLayer.bounds.item2))) : null,
+            bounds: tileLayer.bounds ? L.latLngBounds(tileLayer.bounds.item1, tileLayer.bounds.item2) : undefined,
             // ---
             minZoom: tileLayer.minimumZoom,
             maxZoom: tileLayer.maximumZoom,

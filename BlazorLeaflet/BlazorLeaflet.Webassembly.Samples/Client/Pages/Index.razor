@@ -1,6 +1,5 @@
 ﻿@page "/"
 
-@using System.Drawing
 @using BlazorLeaflet.Models
 @using BlazorLeaflet.Models.Events
 @using Data;
@@ -23,7 +22,7 @@
 </div>
 
 <div style="height: 500px; width: 500px;">
-    <LeafletMap Map="_map" InitialPosition="_markerLatLng.ToPointF()" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" />
 </div>
 
 <div class="pt-3">
@@ -40,7 +39,11 @@
 
     protected override void OnInitialized()
     {
-        _map = new Map(jsRuntime);
+        _map = new Map(jsRuntime)
+        {
+            Center = _markerLatLng,
+            Zoom = 4.8f
+        };
         _drawHandler = new DrawHandler(_map, jsRuntime);
 
         _map.Layers.Add(new TileLayer

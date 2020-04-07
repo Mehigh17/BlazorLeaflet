@@ -10,6 +10,36 @@ namespace BlazorLeaflet
 {
     public class Map
     {
+        /// <summary>
+        /// Initial geographic center of the map
+        /// </summary>
+        public LatLng Center { get; set; } = new LatLng();
+
+        /// <summary>
+        /// Initial map zoom level
+        /// </summary>
+        public float Zoom { get; set; }
+
+        /// <summary>
+        /// Minimum zoom level of the map. If not specified and at least one 
+        /// GridLayer or TileLayer is in the map, the lowest of their minZoom
+        /// options will be used instead.
+        /// </summary>
+        public float? MinZoom { get; set; }
+
+        /// <summary>
+        /// Maximum zoom level of the map. If not specified and at least one
+        /// GridLayer or TileLayer is in the map, the highest of their maxZoom
+        /// options will be used instead.
+        /// </summary>
+        public float? MaxZoom { get; set; }
+
+        /// <summary>
+        /// When this option is set, the map restricts the view to the given
+        /// geographical bounds, bouncing the user back if the user tries to pan
+        /// outside the view. 
+        /// </summary>
+        public Tuple<float, float> MaxBounds { get; set; }
 
         public string Id { get; }
         public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
