@@ -8,7 +8,7 @@ namespace BlazorLeaflet.Models
         /// <summary>
         /// Center of the circle.
         /// </summary>
-        public PointF Position { get; set; }
+        public LatLng Position { get; set; }
 
         /// <summary>
         /// Radius of the circle, in meters.

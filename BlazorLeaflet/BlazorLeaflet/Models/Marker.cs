@@ -11,7 +11,7 @@ namespace BlazorLeaflet.Models
         /// <summary>
         /// The position of the marker on the map.
         /// </summary>
-        public PointF Position { get; set; }
+        public LatLng Position { get; set; }
 
         /// <summary>
         /// Icon instance to use for rendering the marker. See <see href="https://leafletjs.com/reference-1.5.0.html#icon">Icon documentation</see> for details on how to customize the marker icon. If not specified, a common instance of <see href="https://leafletjs.com/reference-1.5.0.html#icon-default">L.Icon.Default</see> is used.
@@ -77,13 +77,13 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public int AutoPanSpeed { get; set; } = 10;
         
-        public Marker(float x, float y) : this(new PointF(x, y))
-        {
-        }
+        public Marker(float x, float y) : this(new LatLng(x, y)) { }
 
-        public Marker(PointF position)
+        public Marker(PointF position) : this(position.X, position.Y) { }
+
+        public Marker(LatLng latLng)
         {
-            Position = position;
+            Position = latLng;
         }
 
         #region events
