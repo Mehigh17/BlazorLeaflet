@@ -25,6 +25,8 @@
 
     private Map _map;
 
+    private Circle _circle;
+
     protected override void OnInitialized()
     {
         _map = new Map(jsRuntime)
@@ -33,42 +35,38 @@
             Zoom = 4.8f
         };
 
-        _map.Layers.Add(new TileLayer
+        _map.OnInitialized += () =>
         {
-            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-        });
-
-        _map.Layers.Add(new Polygon
-        {
-            Shape = new[]
+            _map.AddLayer(new TileLayer
             {
-                new[]
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
+
+            _map.AddLayer(new Polygon
+            {
+                Shape = new[]
+                { new[] { new PointF(37f, -109.05f), new PointF(41f, -109.03f), new PointF(41f, -102.05f), new PointF(37f, -102.04f) } },
+                Fill = true,
+                FillColor = Color.Blue,
+                Popup = new Popup
                 {
-                    new PointF(37f, -109.05f),
-                    new PointF(41f, -109.03f),
-                    new PointF(41f, -102.05f),
-                    new PointF(37f, -102.04f)
+                    Content = "How are you doing,"
                 }
-            },
-            Fill = true,
-            FillColor = Color.Blue,
-            Popup = new Popup
+            });
+
+            _map.AddLayer(new Models.Rectangle
             {
-                Content = "How are you doing,"
-            }
-        });
+                Shape = new RectangleF(10f, 0f, 5f, 1f)
+            });
 
-        _map.Layers.Add(new Models.Rectangle
-        {
-            Shape = new RectangleF(10f, 0f, 5f, 1f)
-        });
-
-        _map.Layers.Add(new Circle
-        {
-            Position = new LatLng(10f, 5f),
-            Radius = 10f
-        });
+            _circle = new Circle
+            {
+                Position = new LatLng(10f, 5f),
+                Radius = 10f
+            };
+            _map.AddLayer(_circle);
+        };
     }
 
     private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
@@ -77,6 +75,7 @@
 
     private void FindCity()
     {
+        _circle.Radius = 5000000f;
         var city = cityService.FindCity(CityName);
         if (city != null)
         {
@@ -97,7 +96,7 @@
                 }
             };
 
-            _map.Layers.Add(marker);
+            _map.AddLayer(marker);
         }
     }
 

@@ -51,21 +51,21 @@ namespace BlazorLeaflet.Samples.Data
 
         public void OnDrawCircleToggle(bool isToggled)
         {
-            _map.Layers.Remove(_circle);
+            _map.RemoveLayer(_circle);
             _drawState = DrawState.DrawingCircle;
             OnDrawToggle(isToggled);
         }
 
         public void OnDrawRectangleToggle(bool isToggled)
         {
-            _map.Layers.Remove(_rectangle);
+            _map.RemoveLayer(_rectangle);
             _drawState = DrawState.DrawingRectangle;
             OnDrawToggle(isToggled);
         }
 
         public void OnDrawPolygonToggle(bool isToggled)
         {
-            _map.Layers.Remove(_polygon);
+            _map.RemoveLayer(_polygon);
             _polygon.Shape = null;
             _drawState = DrawState.DrawingPolygon;
             OnDrawToggle(isToggled);
@@ -184,13 +184,13 @@ namespace BlazorLeaflet.Samples.Data
 
         void AddOrUpdateShape(Layer shape)
         {
-            if (_map.Layers.Contains(shape))
+            if (_map.GetLayers().Contains(shape))
             {
                 LeafletInterops.UpdateShape(_jsRuntime, _map.Id, shape);
             }
             else
             {
-                _map.Layers.Add(shape);
+                _map.AddLayer(shape);
             }
         }
 

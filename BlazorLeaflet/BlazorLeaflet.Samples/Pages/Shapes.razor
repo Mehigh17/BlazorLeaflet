@@ -38,19 +38,6 @@
 
     protected override void OnInitialized()
     {
-        _map = new Map(jsRuntime)
-        {
-            Center = _markerLatLng,
-            Zoom = 4.8f
-        };
-        _drawHandler = new DrawHandler(_map, jsRuntime);
-
-        _map.Layers.Add(new TileLayer
-        {
-            UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-        });
-
         var marker = new Marker(_markerLatLng)
         {
             Draggable = true,
@@ -59,10 +46,27 @@
             Tooltip = new Tooltip { Content = "Click and drag to move me" }
         };
 
+        _map = new Map(jsRuntime)
+        {
+            Center = _markerLatLng,
+            Zoom = 4.8f
+        };
+
+        _map.OnInitialized += () =>
+        {
+            _map.AddLayer(new TileLayer
+            {
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
+
+            _map.AddLayer(marker);
+        };
+
+        _drawHandler = new DrawHandler(_map, jsRuntime);
+
         marker.OnMove += OnDrag;
         marker.OnMoveEnd += OnDragEnd;
-
-        _map.Layers.Add(marker);
     }
 
     private void OnDrag(Marker marker, DragEvent evt)

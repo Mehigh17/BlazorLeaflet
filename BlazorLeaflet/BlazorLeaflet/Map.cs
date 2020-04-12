@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BlazorLeaflet.Models;
 using BlazorLeaflet.Utils;
 using System.Collections.ObjectModel;
@@ -6,6 +6,11 @@ using System.Drawing;
 using Microsoft.JSInterop;
 using BlazorLeaflet.Models.Events;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
+using BlazorLeaflet.Attributes;
+using BlazorLeaflet.Exceptions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BlazorLeaflet
 {
@@ -42,15 +47,117 @@ namespace BlazorLeaflet
         /// </summary>
         public Tuple<LatLng, LatLng> MaxBounds { get; set; }
 
+        /// <summary>
+        /// Event raised when the component has finished its first render.
+        /// </summary>
+        public event Action OnInitialized;
+
         public string Id { get; }
-        public ObservableCollection<Layer> Layers { get; set; } = new ObservableCollection<Layer>();
+
+        private ObservableCollection<Layer> _layers = new ObservableCollection<Layer>();
 
         private readonly IJSRuntime _jsRuntime;
+
+        private bool _isInitialized;
 
         public Map(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
             Id = StringHelper.GetRandomString(10);
+
+            _layers.CollectionChanged += OnLayersChanged;
+        }
+
+        /// <summary>
+        /// This method MUST be called only once by the Blazor component upon rendering, and never by the user.
+        /// </summary>
+        public void RaiseOnInitialized()
+        {
+            _isInitialized = true;
+            OnInitialized?.Invoke();
+        }
+
+        /// <summary>
+        /// Add a layer to the map.
+        /// </summary>
+        /// <param name="layer">The layer to be added.</param>
+        /// <exception cref="System.ArgumentNullException">Throws when the layer is null.</exception>
+        /// <exception cref="UninitializedMapException">Throws when the map has not been yet initialized.</exception>
+        public void AddLayer(Layer layer)
+        {
+            if (layer is null)
+            {
+                throw new ArgumentNullException(nameof(layer));
+            }
+
+            if (!_isInitialized)
+            {
+                throw new UninitializedMapException();
+            }
+
+            _layers.Add(layer);
+        }
+
+        /// <summary>
+        /// Remove a layer from the map.
+        /// </summary>
+        /// <param name="layer">The layer to be removed.</param>
+        /// <exception cref="System.ArgumentNullException">Throws when the layer is null.</exception>
+        /// <exception cref="UninitializedMapException">Throws when the map has not been yet initialized.</exception>
+        public void RemoveLayer(Layer layer)
+        {
+            if (layer is null)
+            {
+                throw new ArgumentNullException(nameof(layer));
+            }
+
+            if (!_isInitialized)
+            {
+                throw new UninitializedMapException();
+            }
+
+            _layers.Remove(layer);
+        }
+
+        /// <summary>
+        /// Get a read only collection of the current layers.
+        /// </summary>
+        /// <returns>A read only collection of layers.</returns>
+        public IReadOnlyCollection<Layer> GetLayers()
+        {
+            return _layers.ToList().AsReadOnly();
+        }
+
+        private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in args.NewItems)
+                {
+                    var layer = item as Layer;
+                    LeafletInterops.AddLayer(_jsRuntime, Id, layer);
+                }
+            }
+            else if (args.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in args.OldItems)
+                {
+                    if (item is Layer layer)
+                    {
+                        LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+                    }
+                }
+            }
+            else if (args.Action == NotifyCollectionChangedAction.Replace
+                     || args.Action == NotifyCollectionChangedAction.Move)
+            {
+                foreach (var oldItem in args.OldItems)
+                    if (oldItem is Layer layer)
+                        LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+
+                foreach (var newItem in args.NewItems)
+                    LeafletInterops.AddLayer(_jsRuntime, Id, newItem as Layer);
+            }
         }
 
         public void FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null)
@@ -135,6 +242,8 @@ namespace BlazorLeaflet
         [JSInvokable]
         public void NotifyPreClick(MouseEvent eventArgs) => OnPreClick?.Invoke(this, eventArgs);
 
+        #endregion events
+
         #region InteractiveLayerEvents
         // Has the same events as InteractiveLayer, but it is not a layer. 
         // Could place this code in its own class and make Layer inherit from that, but not every layer is interactive...
@@ -167,10 +276,10 @@ namespace BlazorLeaflet
         public void NotifyMouseOut(MouseEvent eventArgs) => OnMouseOut?.Invoke(this, eventArgs);
 
         public event MouseEventHandler OnContextMenu;
+
         [JSInvokable]
         public void NotifyContextMenu(MouseEvent eventArgs) => OnContextMenu?.Invoke(this, eventArgs);
-        #endregion InteractiveLayerEvents
 
-        #endregion
+        #endregion InteractiveLayerEvents
     }
 }
