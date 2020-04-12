@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using Rectangle = BlazorLeaflet.Models.Rectangle;
 
-namespace BlazorLeaflet.Webassembly.Samples.Client.Data
+namespace BlazorLeaflet.Samples.Data
 {
     public class DrawHandler : IDisposable
     {

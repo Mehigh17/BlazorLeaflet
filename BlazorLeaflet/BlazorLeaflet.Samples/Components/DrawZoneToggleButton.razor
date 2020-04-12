@@ -1,14 +1,12 @@
-﻿@using Data
+﻿@using BlazorLeaflet.Samples.Data
 @implements IDisposable
 
-<a class="@toggleClass" @onclick="ToggleClicked">@ButtonText</a>
+<button @onclick="ToggleClicked">@ButtonText</button>
 
 @code {
     [Parameter] public string ButtonText { get; set; }
     [Parameter] public DrawHandler DrawHandler { get; set; }
     [Parameter] public EventCallback<bool> OnToggleCallback { get; set; }
-
-    string toggleClass = "my-toggle-button";
 
     protected override void OnInitialized()
     {
@@ -18,14 +16,11 @@
 
     async Task ToggleClicked()
     {
-        var isToggled = toggleClass.Equals("my-toggle-button");
-        toggleClass = isToggled ? "my-toggle-button-down" : "my-toggle-button";
-        await OnToggleCallback.InvokeAsync(isToggled);
+        await OnToggleCallback.InvokeAsync(true);
     }
 
     void OnDrawFinished(object sender, EventArgs e)
     {
-        toggleClass = "my-toggle-button";
         StateHasChanged();
     }
 

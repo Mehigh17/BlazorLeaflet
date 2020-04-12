@@ -1,8 +1,7 @@
-﻿@page "/"
+﻿@page "/shapes"
 
 @using BlazorLeaflet.Models
 @using BlazorLeaflet.Models.Events
-@using Data;
 @inject IJSRuntime jsRuntime
 
 <h1>Blazor Leaflet </h1>
@@ -60,14 +59,8 @@
             Tooltip = new Tooltip { Content = "Click and drag to move me" }
         };
 
-        // marker.OnAdd += (s, e) => Console.WriteLine("OnAdd");
-
-        // marker.OnClick += (s, e) => Console.WriteLine("OnClick");
-
         marker.OnMove += OnDrag;
         marker.OnMoveEnd += OnDragEnd;
-
-        // marker.OnDrag += OnDrag;
 
         _map.Layers.Add(marker);
     }
