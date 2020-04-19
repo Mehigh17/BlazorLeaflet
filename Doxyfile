@@ -1,0 +1,16 @@
+PROJECT_NAME=BlazorLeaflet
+PROJECT_NUMBER=1.0.0
+PROJECT_BRIEF=BlazorLeaflet is a Blazor component wrapping Leaflet's APIs, offering a simple and homogeneous implementation of the Leaflet maps.
+PROJECT_LOGO=./media/logo.png
+
+OUTPUT_DIRECTORY=./docs
+
+GENERATE_HTML=YES
+HTML_OUTPUT=.
+HTML_EXTRA_STYLESHEET=./docs_extras/doxygen.css
+
+GENERATE_LATEX=NO
+
+INPUT=./BlazorLeaflet/BlazorLeaflet
+FILE_PATTERNS=*.cs
+RECURSIVE=YES
