@@ -4,7 +4,8 @@
     <div>
         <a href="#description">Description</a> •
         <a href="#installation">Installation</a> •
-        <a href="#samples">Samples</a>
+        <a href="#samples">Samples</a> •
+        <a href="https://mehigh17.github.io/BlazorLeaflet">API Doc</a>
     </div>
 </div>
 
@@ -41,7 +42,7 @@ Create the map
 ```html
 <!-- You must wrap the map component in a container setting its actual size. -->
 <div id="mapContainer" style="width: 300px; height: 300px;">
-    <LeafletMap Map="_map" InitialPosition="_startAt" InitialZoom="4.8f" />
+    <LeafletMap Map="_map" />
 </div>
 ```
 
@@ -61,7 +62,7 @@ marker.Tooltip = new Tooltip { Content = "This is a nice location!" };
 marker.Icon = new Icon { Url = "... some url" };
 
 // Add it to the layers collection
-_map.Layers.Add(marker);
+_map.AddLayer(marker);
 ```
 
 Or add a rectangle that highlights a zone
@@ -73,7 +74,7 @@ rect.FillColor = Color.Red; // Make the filled area red
 rect.Popup = new Popup { Content = "This is a restricted area!" }; // Create a popup when the area is clicked
 
 // Add it to the layers collection
-_map.Layers.Add(rect);
+_map.RemoveAdd(rect);
 ```
 
 Or fit bounds on certain corners
