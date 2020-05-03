@@ -146,8 +146,17 @@ window.leafletBlazor = {
     },
     addGeoJsonLayer: function (mapId, geodata, objectReference) {
         const geoDataObject = JSON.parse(geodata.geoJsonData);
-        const geoJsonLayer = L.geoJSON(geoDataObject);
-        addLayer(mapId, geoJsonLayer);
+        var options = {
+            ...createInteractiveLayer(geodata),
+            title: geodata.title,
+            bubblingMouseEvents: geodata.isBubblingMouseEvents,
+            onEachFeature: function onEachFeature(feature, layer) {
+                connectInteractionEvents(layer, objectReference);
+            }
+        };
+
+        const geoJsonLayer = L.geoJson(geoDataObject, options);
+        addLayer(mapId, geoJsonLayer, geodata.id);
     },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
@@ -357,8 +366,19 @@ function mapEvents(mapElement, objectReference, eventHandlerDict) {
         const handlerName = eventHandlerDict[key];
 
         mapElement.on(key, function (eventArgs) {
-            objectReference.invokeMethodAsync(handlerName,
-                cleanupEventArgsForSerialization(eventArgs));
+            
+            const cleaned = cleanupEventArgsForSerialization(eventArgs);
+            try {
+                objectReference.invokeMethodAsync(handlerName, cleaned).catch(function (err) {
+                    console.log(err);
+                    console.log(cleaned);
+
+                });
+            } catch (error)
+            {
+                    console.log(error);
+                    console.log(cleaned);
+            }
         });
     }
 }

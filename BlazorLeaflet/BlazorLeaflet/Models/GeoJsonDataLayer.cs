@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BlazorLeaflet.Models
 {
-    public class GeoJsonDataLayer : Layer
+    public class GeoJsonDataLayer : InteractiveLayer
     {
         public string GeoJsonData { get; set; }
     }
