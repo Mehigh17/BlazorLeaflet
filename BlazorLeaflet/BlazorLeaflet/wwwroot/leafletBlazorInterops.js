@@ -144,6 +144,20 @@ window.leafletBlazor = {
         const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
         addLayer(mapId, imgLayer);
     },
+    addGeoJsonLayer: function (mapId, geodata, objectReference) {
+        const geoDataObject = JSON.parse(geodata.geoJsonData);
+        var options = {
+            ...createInteractiveLayer(geodata),
+            title: geodata.title,
+            bubblingMouseEvents: geodata.isBubblingMouseEvents,
+            onEachFeature: function onEachFeature(feature, layer) {
+                connectInteractionEvents(layer, objectReference);
+            }
+        };
+
+        const geoJsonLayer = L.geoJson(geoDataObject, options);
+        addLayer(mapId, geoJsonLayer, geodata.id);
+    },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
         const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...
