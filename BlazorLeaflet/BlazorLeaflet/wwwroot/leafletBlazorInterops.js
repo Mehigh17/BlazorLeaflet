@@ -366,19 +366,8 @@ function mapEvents(mapElement, objectReference, eventHandlerDict) {
         const handlerName = eventHandlerDict[key];
 
         mapElement.on(key, function (eventArgs) {
-            
-            const cleaned = cleanupEventArgsForSerialization(eventArgs);
-            try {
-                objectReference.invokeMethodAsync(handlerName, cleaned).catch(function (err) {
-                    console.log(err);
-                    console.log(cleaned);
-
-                });
-            } catch (error)
-            {
-                    console.log(error);
-                    console.log(cleaned);
-            }
+            objectReference.invokeMethodAsync(handlerName,
+                cleanupEventArgsForSerialization(eventArgs));
         });
     }
 }
