@@ -7,7 +7,6 @@ using Microsoft.JSInterop;
 using BlazorLeaflet.Models.Events;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
-using BlazorLeaflet.Attributes;
 using BlazorLeaflet.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace BlazorLeaflet
         /// <summary>
         /// When this option is set, the map restricts the view to the given
         /// geographical bounds, bouncing the user back if the user tries to pan
-        /// outside the view. 
+        /// outside the view.
         /// </summary>
         public Tuple<LatLng, LatLng> MaxBounds { get; set; }
 
