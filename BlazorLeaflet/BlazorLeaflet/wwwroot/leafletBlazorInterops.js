@@ -144,6 +144,20 @@ window.leafletBlazor = {
         const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
         addLayer(mapId, imgLayer);
     },
+    addGeoJsonLayer: function (mapId, geodata, objectReference) {
+        const geoDataObject = JSON.parse(geodata.geoJsonData);
+        var options = {
+            ...createInteractiveLayer(geodata),
+            title: geodata.title,
+            bubblingMouseEvents: geodata.isBubblingMouseEvents,
+            onEachFeature: function onEachFeature(feature, layer) {
+                connectInteractionEvents(layer, objectReference);
+            }
+        };
+
+        const geoJsonLayer = L.geoJson(geoDataObject, options);
+        addLayer(mapId, geoJsonLayer, geodata.id);
+    },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
         const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...
@@ -200,13 +214,13 @@ function createIcon(icon) {
         iconUrl: icon.url,
         iconRetinaUrl: icon.retinaUrl,
         iconSize: icon.size ? L.point(icon.size.value.width, icon.size.value.height) : null,
-        iconAnchor: icon.anchor ? L.point(icon.anchor.x, icon.anchor.y) : null,
+        iconAnchor: icon.anchor ? L.point(icon.anchor.value.x, icon.anchor.value.y) : null,
         popupAnchor: L.point(icon.popupAnchor.x, icon.popupAnchor.y),
         tooltipAnchor: L.point(icon.tooltipAnchor.x, icon.tooltipAnchor.y),
         shadowUrl: icon.shadowUrl,
         shadowRetinaUrl: icon.shadowRetinaUrl,
-        shadowSize: icon.shadowSize ? L.point(icon.shadowSize.width, icon.shadowSize.height) : null,
-        shadowSizeAnchor: icon.shadowSizeAnchor ? L.point(icon.shadowSizeAnchor.width, icon.shadowSizeAnchor.height) : null,
+        shadowSize: icon.shadowSize ? L.point(icon.shadowSize.value.width, icon.shadowSize.value.height) : null,
+        shadowSizeAnchor: icon.shadowSizeAnchor ? L.point(icon.shadowSizeAnchor.value.width, icon.shadowSizeAnchor.value.height) : null,
         className: icon.className
     })
 }

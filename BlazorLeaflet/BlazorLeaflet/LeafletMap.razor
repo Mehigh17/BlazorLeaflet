@@ -5,7 +5,6 @@
 <div id="@Map.Id" style="width: 100%; height: 100%;"></div>
 
 @code {
-
     [Parameter] public Map Map { get; set; }
 
 
@@ -14,41 +13,7 @@
         if (firstRender)
         {
             await LeafletInterops.Create(JsRuntime, Map);
-
-            Map.Layers.CollectionChanged += OnLayersChanged;
-            foreach (var layer in Map.Layers.ToList())
-            {
-                await LeafletInterops.AddLayer(JsRuntime, Map.Id, layer);
-            }
-        }
-    }
-
-    private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
-    {
-        if (args.Action == NotifyCollectionChangedAction.Add)
-        {
-            foreach (var item in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, Map.Id, item as Layer);
-        }
-        else if (args.Action == NotifyCollectionChangedAction.Remove)
-        {
-            foreach (var item in args.OldItems)
-            {
-                if (item is Layer layer)
-                {
-                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
-                }
-            }
-        }
-        else if (args.Action == NotifyCollectionChangedAction.Replace
-                 || args.Action == NotifyCollectionChangedAction.Move)
-        {
-            foreach (var oldItem in args.OldItems)
-                if (oldItem is Layer layer)
-                    LeafletInterops.RemoveLayer(JsRuntime, Map.Id, layer.Id);
-
-            foreach (var newItem in args.NewItems)
-                LeafletInterops.AddLayer(JsRuntime, Map.Id, newItem as Layer);
+            Map.RaiseOnInitialized();
         }
     }
 
