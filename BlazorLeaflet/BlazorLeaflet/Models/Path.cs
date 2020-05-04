@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using BlazorLeaflet.Utils;
+using System.Drawing;
 
 namespace BlazorLeaflet.Models
 {
-    public abstract class Path : InteractiveLayer
+    public abstract class Path : InteractiveLayer, ICanUpdateStyleLayer
     {
 
         /// <summary>

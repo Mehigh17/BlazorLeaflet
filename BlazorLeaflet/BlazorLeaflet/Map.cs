@@ -98,6 +98,14 @@ namespace BlazorLeaflet
         }
 
         /// <summary>
+        /// Apply a style to a layer. Note this is only possible for a GeoJSON or Path layer.
+        /// </summary>
+        public void UpdateStyle(ICanUpdateStyleLayer layer, Style style)
+        {
+            LeafletInterops.UpdateStyleContent(_jsRuntime, Id, layer, style);
+        }
+
+        /// <summary>
         /// Remove a layer from the map.
         /// </summary>
         /// <param name="layer">The layer to be removed.</param>

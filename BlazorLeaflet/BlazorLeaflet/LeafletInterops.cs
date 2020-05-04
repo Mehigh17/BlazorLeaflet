@@ -1,4 +1,5 @@
 ﻿using BlazorLeaflet.Models;
+using BlazorLeaflet.Utils;
 using Microsoft.JSInterop;
 using System;
 using System.Drawing;
@@ -39,6 +40,9 @@ namespace BlazorLeaflet
 
         public static ValueTask UpdateTooltipContent(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateTooltipContent", mapId, layer.Id, layer.Tooltip?.Content);
+
+        public static ValueTask UpdateStyleContent(IJSRuntime jsRuntime, string mapId, ICanUpdateStyleLayer layer, Style style) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateStyleContent", mapId, layer.Id, style);
 
         public static ValueTask UpdateShape(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             layer switch

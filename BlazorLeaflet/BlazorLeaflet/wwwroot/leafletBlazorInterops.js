@@ -183,6 +183,12 @@ window.leafletBlazor = {
             }
         }
     },
+    updateStyleContent: function (mapId, layerId, style) {
+        let layer = layers[mapId].find(l => l.id === layerId);
+        if (layer !== undefined) {
+            layer.setStyle(buildStyle(style));
+        }
+    },
     fitBounds: function (mapId, corner1, corner2, padding, maxZoom) {
         const corner1LL = L.latLng(corner1.x, corner1.y);
         const corner2LL = L.latLng(corner2.x, corner2.y);
@@ -280,6 +286,21 @@ function createLayer(obj) {
 
 function getColorString(color) {
     return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+}
+
+function buildStyle(style) {
+    if (style) {
+        const llstyle = {
+            weight: style.weight,
+            opacity: style.opacity
+        };
+
+        if (style.color)
+            llstyle.color = getColorString(style.color);
+       
+        return llstyle;
+    }
+    return undefined;
 }
 
 function unbindTooltipAndPopupIfDefined(layer) {
