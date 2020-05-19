@@ -174,7 +174,18 @@ namespace BlazorLeaflet
         public async Task<float> GetZoom() => 
             await LeafletInterops.GetZoom(_jsRuntime, Id);
 
+        /// <summary>
+        /// Increases the zoom level by one notch.
+        /// 
+        /// If <c>shift</c> is held down, increases it by three.
+        /// </summary>
         public async Task ZoomIn(MouseEventArgs e) => await LeafletInterops.ZoomIn(_jsRuntime, Id, e);
+
+        /// <summary>
+        /// Decreases the zoom level by one notch.
+        /// 
+        /// If <c>shift</c> is held down, decreases it by three.
+        /// </summary>
         public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(_jsRuntime, Id, e);
 
         #region events
