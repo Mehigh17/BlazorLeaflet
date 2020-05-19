@@ -9,7 +9,7 @@ namespace BlazorLeaflet.Models
         /// <summary>
         /// Width and height of tiles in the grid.
         /// </summary>
-        public Size Size { get; set; } = new Size(256, 256);
+        public Size TileSize { get; set; } = new Size(256, 256);
 
         public double Opacity { get; set; } = 1.0;
 

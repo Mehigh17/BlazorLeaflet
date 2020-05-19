@@ -20,7 +20,7 @@ window.leafletBlazor = {
             attribution: tileLayer.attribution,
             pane: tileLayer.pane,
             // ---
-            size: tileLayer.size ? L.point(tileLayer.size.width, tileLayer.size.height) : undefined,
+            tileSize: tileLayer.tileSize ? L.point(tileLayer.tileSize.width, tileLayer.tileSize.height) : undefined,
             opacity: tileLayer.opacity,
             updateWhenZooming: tileLayer.updateWhenZooming,
             updateInterval: tileLayer.updateInterval,
