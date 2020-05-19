@@ -206,6 +206,20 @@ window.leafletBlazor = {
     },
     getZoom: function (mapId) {
         return maps[mapId].getZoom();
+    },
+    zoomIn: function (mapId, e) {
+        const map = maps[mapId];
+
+        if (map.getZoom() < map.getMaxZoom()) {
+            map.zoomIn(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
+        }
+    },
+    zoomOut: function (mapId, e) {
+        const map = maps[mapId];
+
+        if (map.getZoom() > map.getMinZoom()) {
+            map.zoomOut(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
+        }
     }
 };
 

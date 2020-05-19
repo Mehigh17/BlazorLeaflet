@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using BlazorLeaflet.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorLeaflet
 {
@@ -170,7 +171,11 @@ namespace BlazorLeaflet
         }
 
         public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => await LeafletInterops.GetZoom(_jsRuntime, Id);
+        public async Task<float> GetZoom() => 
+            await LeafletInterops.GetZoom(_jsRuntime, Id);
+
+        public async Task ZoomIn(MouseEventArgs e) => await LeafletInterops.ZoomIn(_jsRuntime, Id, e);
+        public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(_jsRuntime, Id, e);
 
         #region events
 
