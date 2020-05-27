@@ -6,6 +6,7 @@ window.leafletBlazor = {
         var leafletMap = L.map(map.id, {
             center: map.center,
             zoom: map.zoom,
+            zoomControl: map.zoomControl,
             minZoom: map.minZoom ? map.minZoom : undefined,
             maxZoom: map.maxZoom ? map.maxZoom : undefined,
             maxBounds: map.maxBounds && map.maxBounds.item1 && map.maxBounds.item2 ? L.latLngBounds(map.maxBounds.item1, map.maxBounds.item2) : undefined,

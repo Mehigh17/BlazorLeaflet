@@ -48,6 +48,13 @@ namespace BlazorLeaflet
         public Tuple<LatLng, LatLng> MaxBounds { get; set; }
 
         /// <summary>
+        /// Whether a zoom control is added to the map by default.
+        /// <para/>
+        /// Defaults to true.
+        /// </summary>
+        public bool ZoomControl { get; set; } = true;
+
+        /// <summary>
         /// Event raised when the component has finished its first render.
         /// </summary>
         public event Action OnInitialized;
