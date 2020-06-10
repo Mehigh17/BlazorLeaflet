@@ -6,6 +6,7 @@ window.leafletBlazor = {
         var leafletMap = L.map(map.id, {
             center: map.center,
             zoom: map.zoom,
+            zoomControl: map.zoomControl,
             minZoom: map.minZoom ? map.minZoom : undefined,
             maxZoom: map.maxZoom ? map.maxZoom : undefined,
             maxBounds: map.maxBounds && map.maxBounds.item1 && map.maxBounds.item2 ? L.latLngBounds(map.maxBounds.item1, map.maxBounds.item2) : undefined,
@@ -206,6 +207,20 @@ window.leafletBlazor = {
     },
     getZoom: function (mapId) {
         return maps[mapId].getZoom();
+    },
+    zoomIn: function (mapId, e) {
+        const map = maps[mapId];
+
+        if (map.getZoom() < map.getMaxZoom()) {
+            map.zoomIn(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
+        }
+    },
+    zoomOut: function (mapId, e) {
+        const map = maps[mapId];
+
+        if (map.getZoom() > map.getMinZoom()) {
+            map.zoomOut(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
+        }
     }
 };
 

@@ -1,4 +1,5 @@
 using BlazorLeaflet.Models;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -86,5 +87,11 @@ namespace BlazorLeaflet
 
         public static ValueTask<float> GetZoom(IJSRuntime jsRuntime, string mapId) =>
             jsRuntime.InvokeAsync<float>($"{_BaseObjectContainer}.getZoom", mapId);
+
+        public static ValueTask ZoomIn(IJSRuntime jsRuntime, string mapId, MouseEventArgs e) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.zoomIn", mapId, e);
+
+        public static ValueTask ZoomOut(IJSRuntime jsRuntime, string mapId, MouseEventArgs e) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.zoomOut", mapId, e);
     }
 }
