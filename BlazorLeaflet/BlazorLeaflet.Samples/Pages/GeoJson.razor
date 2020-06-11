@@ -30,42 +30,48 @@
     {
         var badEuropeMap = @"
 {
-  ""type"": ""FeatureCollection"",
-  ""features"": [
-    {
-      ""type"": ""Feature"",
-      ""properties"": {},
-      ""geometry"": {
-        ""type"": ""Point"",
-        ""coordinates"": [
-          -82.44140625,
-          22.917922936146045
-        ]
-      }
-    },
-    {
-      ""type"": ""Feature"",
-      ""properties"": {},
-      ""geometry"": {
-        ""type"": ""Point"",
-        ""coordinates"": [
-          -80.244140625,
-          25.720735134412106
-        ]
-      }
-    },
-    {
-      ""type"": ""Feature"",
-      ""properties"": {},
-      ""geometry"": {
-        ""type"": ""Point"",
-        ""coordinates"": [
-          -68.9501953125,
-          12.211180191503997
-        ]
-      }
-    }
-  ]
+	""type"": ""FeatureCollection"",
+	""features"": [
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""Cuba""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-82.44140625,
+					22.917922936146045
+				]
+			}
+		},
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""USA""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-80.244140625,
+					25.720735134412106
+				]
+			}
+		},
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""Venezuela""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-68.9501953125,
+					12.211180191503997
+				]
+			}
+		}
+	]
 }
 ";
 
@@ -74,12 +80,13 @@
             GeoJsonData = badEuropeMap
         };
 
-        dataLayer.PointToLayer = new Func<object, LatLng, Marker>((point, latLng) =>
+        dataLayer.PointToLayer = new Func<GeoJsonFeature, LatLng, Marker>((feature, latLng) =>
         {
-            return new Marker(latLng) {
+            return new Marker(latLng)
+            {
                 Icon = new Icon
                 {
-                    Size = new System.Drawing.Size(24, 24),                    
+                    Size = new System.Drawing.Size(24, 24),
                     Url = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Run.svg/200px-Run.svg.png",
                     ClassName = "map-icon",
                 },
