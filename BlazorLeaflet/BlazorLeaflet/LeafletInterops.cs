@@ -2,6 +2,7 @@ using BlazorLeaflet.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace BlazorLeaflet
     public static class LeafletInterops
     {
 
-        private static Dictionary<string, (IDisposable, string, Layer)> LayerReferences { get; }
-            = new Dictionary<string, (IDisposable, string, Layer)>();
+        private static ConcurrentDictionary<string, (IDisposable, string, Layer)> LayerReferences { get; }
+            = new ConcurrentDictionary<string, (IDisposable, string, Layer)>();
 
         private static readonly string _BaseObjectContainer = "window.leafletBlazor";
 
@@ -23,17 +24,14 @@ namespace BlazorLeaflet
         private static DotNetObjectReference<T> CreateLayerReference<T>(string mapId, T layer) where T : Layer
         {
             var result = DotNetObjectReference.Create(layer);
-            LayerReferences.Add(layer.Id, (result, mapId, layer));
+            LayerReferences.TryAdd(layer.Id, (result, mapId, layer));
             return result;
         }
 
         private static void DisposeLayerReference(string layerId)
         {
-            if (LayerReferences.TryGetValue(layerId, out var value))
-            {
+            if (LayerReferences.TryRemove(layerId, out var value))
                 value.Item1.Dispose();
-                LayerReferences.Remove(layerId);
-            }
         }
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer)
