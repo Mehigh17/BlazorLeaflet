@@ -16,15 +16,38 @@ namespace BlazorLeaflet
 {
     public class Map
     {
+        private LatLng _Center = new LatLng();
         /// <summary>
-        /// Initial geographic center of the map
+        /// Geographic center of the map
         /// </summary>
-        public LatLng Center { get; set; } = new LatLng();
+        /// 
+        public LatLng Center
+        {
+            get => _Center;
+            set
+            {
+                _Center = value;
+                if (_isInitialized)
+                    RunTaskInBackground(async () => await LeafletInterops.PanTo(
+                        _jsRuntime, Id, value.ToPointF(), false, 0, 0, false));
+            }
+        }
 
+        private float _Zoom;
         /// <summary>
-        /// Initial map zoom level
+        /// Map zoom level
         /// </summary>
-        public float Zoom { get; set; }
+        public float Zoom
+        {
+            get => _Zoom;
+            set
+            {
+                _Zoom = value;
+                if (_isInitialized)
+                    RunTaskInBackground(async () => await LeafletInterops.SetZoom(
+                        _jsRuntime, Id, value));
+            }
+        }
 
         /// <summary>
         /// Minimum zoom level of the map. If not specified and at least one 
@@ -82,6 +105,18 @@ namespace BlazorLeaflet
         {
             _isInitialized = true;
             OnInitialized?.Invoke();
+        }
+
+        private async void RunTaskInBackground(Func<Task> task)
+        {
+            try
+            {
+                await task();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
+            }
         }
 
         /// <summary>
@@ -195,6 +230,17 @@ namespace BlazorLeaflet
         /// </summary>
         public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(_jsRuntime, Id, e);
 
+        private async Task UpdateZoom()
+        {
+            _Zoom = await GetZoom();
+        }
+
+        private async Task UpdateCenter()
+        {
+            
+            _Center = await GetCenter();
+        }
+
         #region events
 
         public delegate void MapEventHandler(object sender, Event e);
@@ -238,11 +284,31 @@ namespace BlazorLeaflet
 
         public event MapEventHandler OnZoomEnd;
         [JSInvokable]
-        public void NotifyZoomEnd(Event e) => OnZoomEnd?.Invoke(this, e);
+        public async void NotifyZoomEnd(Event e)
+        {
+            try
+            {
+                await UpdateZoom();
+            }
+            finally
+            {
+                OnZoomEnd?.Invoke(this, e);
+            }
+        }
 
         public event MapEventHandler OnMoveEnd;
         [JSInvokable]
-        public void NotifyMoveEnd(Event e) => OnMoveEnd?.Invoke(this, e);
+        public async void NotifyMoveEnd(Event e)
+        {
+            try
+            {
+                await UpdateCenter();
+            }
+            finally
+            {
+                OnMoveEnd?.Invoke(this, e);
+            }
+        }
 
         public event MouseEventHandler OnMouseMove;
         [JSInvokable]
@@ -263,6 +329,10 @@ namespace BlazorLeaflet
         public event MouseEventHandler OnPreClick;
         [JSInvokable]
         public void NotifyPreClick(MouseEvent eventArgs) => OnPreClick?.Invoke(this, eventArgs);
+
+        public event EventHandler<Exception> BackgroundExceptionOccurred;
+        private void NotifyBackgroundExceptionOccurred(Exception exception) =>
+            BackgroundExceptionOccurred?.Invoke(this, exception);
 
         #endregion events
 
