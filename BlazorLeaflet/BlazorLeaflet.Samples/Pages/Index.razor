@@ -19,6 +19,7 @@
 <div style="height: 500px; width: 500px;">
     <LeafletMap Map="_map" />
 </div>
+<p>Map bounds: @_map.Bounds?.ToString()</p>
 
 @code
 {
@@ -67,6 +68,7 @@
             };
             _map.AddLayer(_circle);
         };
+        _map.OnBoundsChanged += (s, e) => this.StateHasChanged();
     }
 
     private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
