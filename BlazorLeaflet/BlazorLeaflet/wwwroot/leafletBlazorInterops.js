@@ -159,6 +159,18 @@ window.leafletBlazor = {
         const geoJsonLayer = L.geoJson(geoDataObject, options);
         addLayer(mapId, geoJsonLayer, geodata.id);
     },
+    addWmsLayer: function (mapId, wms, objectReference) {
+        const layer = L.tileLayer.wms(wms.baseUrl, {
+            layers: wms.layers.join(','),
+            styles: wms.styles.join(','),
+            attribution: wms.attribution,
+            format: wms.imageFormat,
+            transparent: wms.isTransparent,
+            version: wms.wmsVersion,
+            uppercase: wms.useUppercase
+        });
+        addLayer(mapId, layer, wms.id);
+    },
     removeLayer: function (mapId, layerId) {
         const remainingLayers = layers[mapId].filter((layer) => layer.id !== layerId);
         const layersToBeRemoved = layers[mapId].filter((layer) => layer.id === layerId); // should be only one ...

@@ -1,0 +1,41 @@
+﻿@page "/wms"
+
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>WMS TileLayer</h1>
+
+<p>A WMS layer sample (schools in France), courtesy of <a href="https://magosm.magellium.com/index.html">magOSM</a>.</p>
+
+<div style="height: 500px; width: 500px;">
+    <LeafletMap Map="_map" />
+</div>
+
+@code
+{
+    private Map _map;
+    private LatLng _markerLatLng = new LatLng { Lat = 47f, Lng = 2f };
+
+    protected override void OnInitialized()
+    {
+        _map = new Map(jsRuntime)
+        {
+            Center = _markerLatLng,
+            Zoom = 4.8f
+        };
+
+        _map.OnInitialized += () =>
+        {
+            _map.AddLayer(new WmsLayer("https://magosm.magellium.com/geoserver/wms?")
+            {
+                Layers = new[] { "magosm:france_schools_point" },
+                Styles = new string[] { },
+                ImageFormat = "image/png",
+                IsTransparent = true,
+                UseUppercaseParameters = true,
+                WmsVersion = "1.3.0"
+            });
+        };
+    }
+}
