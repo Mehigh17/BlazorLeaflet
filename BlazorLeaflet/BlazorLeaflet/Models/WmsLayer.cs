@@ -34,7 +34,10 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public string WmsVersion { get; set; }
 
-        // TODO CRS
+        /// <summary>
+        /// The _c_oordinate _r_eference _s_ystem to use.
+        /// </summary>
+        public Crs Crs { get; set; }
 
         /// <summary>
         /// Whether to pass request query parameter keys in upper case.
