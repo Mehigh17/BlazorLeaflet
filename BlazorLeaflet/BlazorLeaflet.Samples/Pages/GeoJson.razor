@@ -1,0 +1,122 @@
+﻿@page "/geojson"
+
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Blazor Leaflet</h1>
+
+<p>
+    This page demos GeoJSON layers.
+</p>
+
+<p>
+    By default, each point in a GeoJSON layer is just a normal marker. Instead,
+    you can optionally set <code>PointToLayer</code> to a method that
+    customizes the layer each point corresponds to. Currently, only markers are
+    supported.
+</p>
+
+<div style="height: 500px; width: 500px;">
+    <LeafletMap Map="_map" />
+</div>
+
+@code
+{
+    private Map _map;
+    private LatLng _markerLatLng = new LatLng { Lat = 18, Lng = -76 };
+
+    protected override void OnInitialized()
+    {
+        var badEuropeMap = @"
+{
+	""type"": ""FeatureCollection"",
+	""features"": [
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""Cuba""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-82.44140625,
+					22.917922936146045
+				]
+			}
+		},
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""USA""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-80.244140625,
+					25.720735134412106
+				]
+			}
+		},
+		{
+			""type"": ""Feature"",
+			""properties"": {
+				""country"": ""Venezuela""
+			},
+			""geometry"": {
+				""type"": ""Point"",
+				""coordinates"": [
+					-68.9501953125,
+					12.211180191503997
+				]
+			}
+		}
+	]
+}
+";
+
+        var dataLayer = new GeoJsonDataLayer
+        {
+            GeoJsonData = badEuropeMap
+        };
+
+        dataLayer.PointToLayer = new Func<GeoJsonFeature, LatLng, Marker>((feature, latLng) =>
+        {
+            return new Marker(latLng)
+            {
+                Icon = new Icon
+                {
+                    Size = new System.Drawing.Size(24, 24),
+                    Url = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Run.svg/200px-Run.svg.png",
+                    ClassName = "map-icon",
+                },
+                Tooltip = new Tooltip
+                {
+                    Content = "This is a tooltip",
+                },
+                Popup = new Popup
+                {
+                    Content = "This is a popup",
+                },
+                Title = "This is the title attribute"
+            };
+        });
+
+        _map = new Map(jsRuntime)
+        {
+            Center = _markerLatLng,
+            Zoom = 4.8f
+        };
+
+        _map.OnInitialized += () =>
+        {
+            _map.AddLayer(new TileLayer
+            {
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
+
+            _map.AddLayer(dataLayer);
+        };
+    }
+}
