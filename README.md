@@ -82,3 +82,6 @@ Or fit bounds on certain corners
 ```cs
 _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZoom: 5f);
 ```
+# Rendering requirements
+
+BlazorLeaflet uses some ECMA 6 operators (spread) and therefore rendering requires compatible browser such as: EDGE v. ≥79, Chrome v. ≥63, Firefox v. ≥67, Safari v. ≥11 and so forth.
