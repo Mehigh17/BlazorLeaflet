@@ -1,5 +1,5 @@
 ﻿namespace BlazorLeaflet.Models
 {
-    public class Polygon : Polyline
-    { }
+	public class Polygon : Polyline
+	{ }
 }
