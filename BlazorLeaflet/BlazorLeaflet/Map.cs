@@ -16,21 +16,38 @@ namespace BlazorLeaflet
 {
     public class Map
     {
+        private LatLng _Center = new LatLng();
         /// <summary>
-        /// Initial geographic center of the map
+        /// Geographic center of the map
         /// </summary>
-        public LatLng Center { get; set; } = new LatLng();
+        /// 
+        public LatLng Center
+        {
+            get => _Center;
+            set
+            {
+                _Center = value;
+                if (_isInitialized)
+                    RunTaskInBackground(async () => await LeafletInterops.PanTo(
+                        _jsRuntime, Id, value.ToPointF(), false, 0, 0, false));
+            }
+        }
 
+        private float _Zoom;
         /// <summary>
-        /// Initial map zoom level
+        /// Map zoom level
         /// </summary>
-        public float Zoom { get; set; }
-
-
-        /// <summary>
-        /// Map bounds
-        /// </summary>
-        public Bounds Bounds { get; private set; }
+        public float Zoom
+        {
+            get => _Zoom;
+            set
+            {
+                _Zoom = value;
+                if (_isInitialized)
+                    RunTaskInBackground(async () => await LeafletInterops.SetZoom(
+                        _jsRuntime, Id, value));
+            }
+        }
 
         /// <summary>
         /// Minimum zoom level of the map. If not specified and at least one 
@@ -88,7 +105,6 @@ namespace BlazorLeaflet
         {
             _isInitialized = true;
             OnInitialized?.Invoke();
-            RunTaskInBackground(UpdateBounds);
         }
 
         private async void RunTaskInBackground(Func<Task> task)
@@ -197,15 +213,8 @@ namespace BlazorLeaflet
         }
 
         public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => await LeafletInterops.GetZoom(_jsRuntime, Id);
-        public async Task<Bounds> GetBounds() => await LeafletInterops.GetBounds(_jsRuntime, Id);
-
-
-        private async Task UpdateBounds()
-        {
-            Bounds = await GetBounds();
-            OnBoundsChanged?.Invoke(this, new EventArgs());
-        }
+        public async Task<float> GetZoom() => 
+            await LeafletInterops.GetZoom(_jsRuntime, Id);
 
         /// <summary>
         /// Increases the zoom level by one notch.
@@ -220,6 +229,17 @@ namespace BlazorLeaflet
         /// If <c>shift</c> is held down, decreases it by three.
         /// </summary>
         public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(_jsRuntime, Id, e);
+
+        private async Task UpdateZoom()
+        {
+            _Zoom = await GetZoom();
+        }
+
+        private async Task UpdateCenter()
+        {
+            
+            _Center = await GetCenter();
+        }
 
         #region events
 
@@ -268,11 +288,7 @@ namespace BlazorLeaflet
         {
             try
             {
-                await UpdateBounds();
-            }
-            catch (Exception ex)
-            {
-                NotifyBackgroundExceptionOccurred(ex);
+                await UpdateZoom();
             }
             finally
             {
@@ -286,19 +302,13 @@ namespace BlazorLeaflet
         {
             try
             {
-                await UpdateBounds();
-            }
-            catch (Exception ex)
-            {
-                NotifyBackgroundExceptionOccurred(ex);
+                await UpdateCenter();
             }
             finally
             {
                 OnMoveEnd?.Invoke(this, e);
             }
         }
-
-        public event EventHandler OnBoundsChanged;
 
         public event MouseEventHandler OnMouseMove;
         [JSInvokable]
