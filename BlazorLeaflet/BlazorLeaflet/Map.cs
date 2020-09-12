@@ -71,7 +71,7 @@ namespace BlazorLeaflet
 
 		private readonly IJSRuntime _jsRuntime;
 
-		private bool _isInitialized;
+		public bool IsInitialized { get; private set; }
 
 		public Map(IJSRuntime jsRuntime)
 		{
@@ -86,7 +86,7 @@ namespace BlazorLeaflet
 		/// </summary>
 		public void RaiseOnInitialized()
 		{
-			_isInitialized = true;
+			IsInitialized = true;
 			OnInitialized?.Invoke();
 			RunTaskInBackground(UpdateBounds);
 		}
@@ -116,7 +116,7 @@ namespace BlazorLeaflet
 				throw new ArgumentNullException(nameof(layer));
 			}
 
-			if (!_isInitialized)
+			if (!IsInitialized)
 			{
 				throw new UninitializedMapException();
 			}
@@ -137,12 +137,25 @@ namespace BlazorLeaflet
 				throw new ArgumentNullException(nameof(layer));
 			}
 
-			if (!_isInitialized)
+			if (!IsInitialized)
 			{
 				throw new UninitializedMapException();
 			}
 
 			_layers.Remove(layer);
+		}
+
+		public void RemoveAllLayersOfType<TLayer>() where TLayer : Layer
+		{
+			if (!IsInitialized)
+			{
+				throw new UninitializedMapException();
+			}
+			var rm = _layers.Where(t => t.GetType().IsSubclassOf(typeof(TLayer))).ToArray();
+			foreach (var layer in rm)
+			{
+				_layers.Remove(layer);
+			}
 		}
 
 		/// <summary>
@@ -170,7 +183,7 @@ namespace BlazorLeaflet
 				{
 					if (item is Layer layer)
 					{
-						LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+						_ = LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
 					}
 				}
 			}
@@ -179,7 +192,7 @@ namespace BlazorLeaflet
 			{
 				foreach (var oldItem in args.OldItems)
 					if (oldItem is Layer layer)
-						LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+						_ = LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
 
 				foreach (var newItem in args.NewItems)
 					LeafletInterops.AddLayer(_jsRuntime, Id, newItem as Layer);

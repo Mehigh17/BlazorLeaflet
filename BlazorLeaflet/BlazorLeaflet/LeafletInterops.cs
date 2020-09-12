@@ -51,9 +51,9 @@ namespace BlazorLeaflet
 			};
 		}
 
-		public static void RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId)
+		public static async Task RemoveLayer(IJSRuntime jsRuntime, string mapId, string layerId)
 		{
-			jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId).GetAwaiter().GetResult();
+			await jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.removeLayer", mapId, layerId);
 			DisposeLayerReference(layerId);
 		}
 
