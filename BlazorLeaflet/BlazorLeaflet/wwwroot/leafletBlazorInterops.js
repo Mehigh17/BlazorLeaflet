@@ -156,6 +156,50 @@ window.leafletBlazor = {
             }
         };
 
+        if (geodata.hasPointToLayerFunc) {
+            options.pointToLayer = function pointToLayer(geoJsonPoint, latlng) {
+                var _mapId = mapId;
+
+                // we need to first pass leaflet an empty layer group,
+                // then asynchronously add our actual layer to it
+
+                var emptyGroup = L.layerGroup();
+
+                objectReference.invokeMethodAsync("CallPointToLayer", geoJsonPoint, latlng)
+                    .then(function (result) {
+                        const marker = result.layer;
+
+                        var options = {
+                            ...createInteractiveLayer(marker),
+                            keyboard: marker.isKeyboardAccessible,
+                            title: marker.title,
+                            alt: marker.alt,
+                            zIndexOffset: marker.zIndexOffset,
+                            opacity: marker.opacity,
+                            riseOnHover: marker.riseOnHover,
+                            riseOffset: marker.riseOffset,
+                            pane: marker.pane,
+                            bubblingMouseEvents: marker.isBubblingMouseEvents,
+                            draggable: marker.draggable,
+                            autoPan: marker.useAutopan,
+                            autoPanPadding: marker.autoPanPadding,
+                            autoPanSpeed: marker.autoPanSpeed
+                        };
+
+                        if (marker.icon !== null) {
+                            options.icon = createIcon(marker.icon);
+                        }
+                        const mkr = L.marker(marker.position, options);
+                        connectMarkerEvents(mkr, objectReference);
+                        setTooltipAndPopupIfDefined(marker, mkr);
+
+                        mkr.addTo(emptyGroup);
+                    });
+
+                return emptyGroup;
+            };
+        }
+
         const geoJsonLayer = L.geoJson(geoDataObject, options);
         addLayer(mapId, geoJsonLayer, geodata.id);
     },
