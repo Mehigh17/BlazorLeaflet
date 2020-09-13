@@ -20,7 +20,11 @@
 <div style="height: 500px; width: 500px;">
 	<LeafletMap Map="_map" />
 </div>
-<p>Map bounds: @_map.Bounds?.ToString()</p>
+<tbody>
+	<tr><td>Map Bounds:</td><td>@_map.Bounds?.ToString()</td></tr>
+	<tr><td>Center:</td><td>@_map.Center.Lat , @_map.Center.Lng</td></tr>
+	<tr><td>Zoom:</td><td>@_map.Zoom</td></tr>
+</tbody>
 
 @code
 { private Map _map;

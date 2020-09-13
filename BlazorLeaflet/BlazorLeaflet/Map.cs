@@ -224,6 +224,8 @@ namespace BlazorLeaflet
 		private async Task UpdateBounds()
 		{
 			Bounds = await GetBounds();
+			Center = await GetCenter();
+			Zoom = await GetZoom();
 			OnBoundsChanged?.Invoke(this, new EventArgs());
 		}
 
