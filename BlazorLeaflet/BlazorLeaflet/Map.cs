@@ -151,11 +151,18 @@ namespace BlazorLeaflet
 			{
 				throw new UninitializedMapException();
 			}
-			var rm = _layers.Where(t => t.GetType().IsSubclassOf(typeof(TLayer))).ToArray();
+			var rm = _layers.Where(t => IsSameOrSubclass<TLayer>(t)).ToArray();
 			foreach (var layer in rm)
 			{
 				_layers.Remove(layer);
 			}
+		}
+
+		private bool IsSameOrSubclass<TType>(object o)
+		{
+			var type = o.GetType();
+			var ttype = typeof(TType);
+			return type == ttype || type.IsSubclassOf(ttype);
 		}
 
 		/// <summary>
