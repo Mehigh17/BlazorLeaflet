@@ -1,7 +1,7 @@
 ﻿@using BlazorLeaflet.Samples.Data
 @implements IDisposable
 
-<button @onclick="ToggleClicked">@ButtonText</button>
+<button class="btn btn-primary mb-2" @onclick="ToggleClicked">@ButtonText</button>
 
 @code {
     [Parameter] public string ButtonText { get; set; }

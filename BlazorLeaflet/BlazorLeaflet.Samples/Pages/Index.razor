@@ -66,6 +66,9 @@
 				Radius = 10f
 			};
 			_map.AddLayer(_circle);
+
+			_map.AddLayer(new Marker(54.3f, 10.01f) { Title = "Kiel" });
+
 		};
 		_map.OnBoundsChanged += (s, e) => this.StateHasChanged();
 	}
@@ -80,22 +83,7 @@
 		var city = cityService.FindCity(CityName);
 		if (city != null)
 		{
-			var marker = new Marker(city.Coordinates)
-			{
-				Icon = new Icon
-				{
-					Url = city.CoatOfArmsImageUrl,
-					ClassName = "map-icon",
-				},
-				Tooltip = new Tooltip
-				{
-					Content = city.Name,
-				},
-				Popup = new Popup
-				{
-					Content = city.Description,
-				}
-			};
+			var marker = new CityMarker(city);
 
 			_map.AddLayer(marker);
 		}
