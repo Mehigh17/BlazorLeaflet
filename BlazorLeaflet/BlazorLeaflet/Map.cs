@@ -67,7 +67,7 @@ namespace BlazorLeaflet
 
 		public string Id { get; }
 
-		private ObservableCollection<Layer> _layers = new ObservableCollection<Layer>();
+		private readonly ObservableCollection<Layer> _layers = new ObservableCollection<Layer>();
 
 		private readonly IJSRuntime _jsRuntime;
 
@@ -158,7 +158,7 @@ namespace BlazorLeaflet
 			}
 		}
 
-		private bool IsSameOrSubclass<TType>(object o)
+		private static bool IsSameOrSubclass<TType>(object o)
 		{
 			var type = o.GetType();
 			var ttype = typeof(TType);
@@ -174,14 +174,14 @@ namespace BlazorLeaflet
 			return _layers.ToList().AsReadOnly();
 		}
 
-		private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
+		private async void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			if (args.Action == NotifyCollectionChangedAction.Add)
 			{
 				foreach (var item in args.NewItems)
 				{
 					var layer = item as Layer;
-					LeafletInterops.AddLayer(_jsRuntime, Id, layer);
+					await LeafletInterops.AddLayer(_jsRuntime, Id, layer);
 				}
 			}
 			else if (args.Action == NotifyCollectionChangedAction.Remove)
@@ -190,7 +190,7 @@ namespace BlazorLeaflet
 				{
 					if (item is Layer layer)
 					{
-						_ = LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+						await LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
 					}
 				}
 			}
@@ -199,21 +199,39 @@ namespace BlazorLeaflet
 			{
 				foreach (var oldItem in args.OldItems)
 					if (oldItem is Layer layer)
-						_ = LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+						await LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
 
 				foreach (var newItem in args.NewItems)
-					LeafletInterops.AddLayer(_jsRuntime, Id, newItem as Layer);
+					await LeafletInterops.AddLayer(_jsRuntime, Id, newItem as Layer);
 			}
 		}
 
-		public void FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null)
+		public ValueTask FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null)
 		{
-			LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2, padding, maxZoom);
+			return LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2, padding, maxZoom);
 		}
 
-		public void PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false)
+		public ValueTask FitBounds(Bounds bounds, PointF? padding = null, float? maxZoom = null)
 		{
-			LeafletInterops.PanTo(_jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
+			return LeafletInterops.FitBounds(_jsRuntime, Id, new PointF(bounds.NorthEast.Lat, bounds.NorthEast.Lng), new PointF(bounds.SouthWest.Lat, bounds.SouthWest.Lng), padding, maxZoom);
+		}
+
+
+		public ValueTask<Bounds> GetBoundsFromMarkers(params Marker[] markers)
+		=> LeafletInterops.GetBoundsFromMarkers(_jsRuntime, markers);
+
+
+
+		public ValueTask FitBounds(params Marker[] markers) => FitBounds(markers, null, null);
+		public async ValueTask FitBounds(Marker[] markers, PointF? padding = null, float? maxZoom = null)
+		{
+			var bounds = await GetBoundsFromMarkers(markers);
+			await FitBounds(bounds, padding, maxZoom);
+		}
+
+		public ValueTask PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false)
+		{
+			return LeafletInterops.PanTo(_jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
 		}
 
 		public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);

@@ -2,7 +2,9 @@ using BlazorLeaflet.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using Rectangle = BlazorLeaflet.Models.Rectangle;
@@ -76,8 +78,13 @@ namespace BlazorLeaflet
 		public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom) =>
 			jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
 
+
 		public static ValueTask PanTo(IJSRuntime jsRuntime, string mapId, PointF position, bool animate, float duration, float easeLinearity, bool noMoveStart) =>
 			jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.panTo", mapId, position, animate, duration, easeLinearity, noMoveStart);
+
+
+		public static async ValueTask<Bounds> GetBoundsFromMarkers(IJSRuntime jsRuntime, params Marker[] markers)
+			=> (await jsRuntime.InvokeAsync<_Bounds>($"{_BaseObjectContainer}.getBoundsFromMarker", new[] { markers })).AsBounds();
 
 		public static ValueTask<LatLng> GetCenter(IJSRuntime jsRuntime, string mapId) =>
 			jsRuntime.InvokeAsync<LatLng>($"{_BaseObjectContainer}.getCenter", mapId);

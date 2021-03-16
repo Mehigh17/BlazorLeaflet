@@ -39,7 +39,7 @@
 			Zoom = 4.8f
 		};
 
-		_map.OnInitialized += () =>
+		_map.OnInitialized += async () =>
 		{
 			_map.AddLayer(new TileLayer
 			{
@@ -70,8 +70,16 @@
 				Radius = 10f
 			};
 			_map.AddLayer(_circle);
+			var markers = new Marker[]
+			{
+				new Marker(54.32f, 10.12f) { Title = "Kiel" },
+				new Marker(54.35f, 10.2f) { Title = "Hamburg" }
+					};
 
-			_map.AddLayer(new Marker(54.3f, 10.01f) { Title = "Kiel" });
+			foreach (var m in markers)
+				_map.AddLayer(m);
+
+			await _map.FitBounds(markers);
 
 		};
 		_map.OnBoundsChanged += (s, e) => this.StateHasChanged();
