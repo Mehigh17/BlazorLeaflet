@@ -14,6 +14,8 @@ namespace BlazorLeaflet.Samples.Data
 			{
 				Url = city.CoatOfArmsImageUrl,
 				ClassName = "map-icon",
+				Size = new System.Drawing.Size(108,179),
+				Anchor = new System.Drawing.Point(108/2,179)
 			};
 			Tooltip = new Tooltip
 			{
