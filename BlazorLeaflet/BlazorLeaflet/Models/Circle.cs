@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace BlazorLeaflet.Models
+﻿namespace BlazorLeaflet.Models
 {
     public class Circle : Path
     {

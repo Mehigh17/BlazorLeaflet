@@ -1,16 +1,16 @@
-using System;
-using BlazorLeaflet.Models;
-using BlazorLeaflet.Utils;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using Microsoft.JSInterop;
-using BlazorLeaflet.Models.Events;
-using System.Threading.Tasks;
-using System.Collections.Specialized;
 using BlazorLeaflet.Exceptions;
-using System.Collections.Generic;
-using System.Linq;
+using BlazorLeaflet.Models;
+using BlazorLeaflet.Models.Events;
+using BlazorLeaflet.Utils;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorLeaflet
 {
@@ -178,7 +178,7 @@ namespace BlazorLeaflet
         }
 
         public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => 
+        public async Task<float> GetZoom() =>
             await LeafletInterops.GetZoom(_jsRuntime, Id);
 
         /// <summary>
