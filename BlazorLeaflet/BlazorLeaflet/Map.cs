@@ -124,6 +124,8 @@ namespace BlazorLeaflet
 			_layers.Add(layer);
 		}
 
+		public ValueTask OpenMarkerPopup(Marker marker) => LeafletInterops.OpenLayerPopup(_jsRuntime, Id, marker);
+
 		/// <summary>
 		/// Remove a layer from the map.
 		/// </summary>
@@ -151,6 +153,7 @@ namespace BlazorLeaflet
 			{
 				throw new UninitializedMapException();
 			}
+
 			var rm = _layers.Where(t => IsSameOrSubclass<TLayer>(t)).ToArray();
 			foreach (var layer in rm)
 			{
@@ -195,7 +198,7 @@ namespace BlazorLeaflet
 				}
 			}
 			else if (args.Action == NotifyCollectionChangedAction.Replace
-					 || args.Action == NotifyCollectionChangedAction.Move)
+			         || args.Action == NotifyCollectionChangedAction.Move)
 			{
 				foreach (var oldItem in args.OldItems)
 					if (oldItem is Layer layer)
@@ -213,23 +216,25 @@ namespace BlazorLeaflet
 
 		public ValueTask FitBounds(Bounds bounds, PointF? padding = null, float? maxZoom = null)
 		{
-			return LeafletInterops.FitBounds(_jsRuntime, Id, new PointF(bounds.NorthEast.Lat, bounds.NorthEast.Lng), new PointF(bounds.SouthWest.Lat, bounds.SouthWest.Lng), padding, maxZoom);
+			return LeafletInterops.FitBounds(_jsRuntime, Id, new PointF(bounds.NorthEast.Lat, bounds.NorthEast.Lng),
+				new PointF(bounds.SouthWest.Lat, bounds.SouthWest.Lng), padding, maxZoom);
 		}
 
 
 		public ValueTask<Bounds> GetBoundsFromMarkers(params Marker[] markers)
-		=> LeafletInterops.GetBoundsFromMarkers(_jsRuntime, markers);
-
+			=> LeafletInterops.GetBoundsFromMarkers(_jsRuntime, markers);
 
 
 		public ValueTask FitBounds(params Marker[] markers) => FitBounds(markers, null, null);
+
 		public async ValueTask FitBounds(Marker[] markers, PointF? padding = null, float? maxZoom = null)
 		{
 			var bounds = await GetBoundsFromMarkers(markers);
 			await FitBounds(bounds, padding, maxZoom);
 		}
 
-		public ValueTask PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false)
+		public ValueTask PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f,
+			bool noMoveStart = false)
 		{
 			return LeafletInterops.PanTo(_jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
 		}
@@ -264,45 +269,56 @@ namespace BlazorLeaflet
 		#region events
 
 		public delegate void MapEventHandler(object sender, Event e);
+
 		public delegate void MapResizeEventHandler(object sender, ResizeEvent e);
 
 		public event MapEventHandler OnZoomLevelsChange;
+
 		[JSInvokable]
 		public void NotifyZoomLevelsChange(Event e) => OnZoomLevelsChange?.Invoke(this, e);
 
 		public event MapResizeEventHandler OnResize;
+
 		[JSInvokable]
 		public void NotifyResize(ResizeEvent e) => OnResize?.Invoke(this, e);
 
 		public event MapEventHandler OnUnload;
+
 		[JSInvokable]
 		public void NotifyUnload(Event e) => OnUnload?.Invoke(this, e);
 
 		public event MapEventHandler OnViewReset;
+
 		[JSInvokable]
 		public void NotifyViewReset(Event e) => OnViewReset?.Invoke(this, e);
 
 		public event MapEventHandler OnLoad;
+
 		[JSInvokable]
 		public void NotifyLoad(Event e) => OnLoad?.Invoke(this, e);
 
 		public event MapEventHandler OnZoomStart;
+
 		[JSInvokable]
 		public void NotifyZoomStart(Event e) => OnZoomStart?.Invoke(this, e);
 
 		public event MapEventHandler OnMoveStart;
+
 		[JSInvokable]
 		public void NotifyMoveStart(Event e) => OnMoveStart?.Invoke(this, e);
 
 		public event MapEventHandler OnZoom;
+
 		[JSInvokable]
 		public void NotifyZoom(Event e) => OnZoom?.Invoke(this, e);
 
 		public event MapEventHandler OnMove;
+
 		[JSInvokable]
 		public void NotifyMove(Event e) => OnMove?.Invoke(this, e);
 
 		public event MapEventHandler OnZoomEnd;
+
 		[JSInvokable]
 		public async void NotifyZoomEnd(Event e)
 		{
@@ -321,6 +337,7 @@ namespace BlazorLeaflet
 		}
 
 		public event MapEventHandler OnMoveEnd;
+
 		[JSInvokable]
 		public async void NotifyMoveEnd(Event e)
 		{
@@ -341,32 +358,39 @@ namespace BlazorLeaflet
 		public event EventHandler OnBoundsChanged;
 
 		public event MouseEventHandler OnMouseMove;
+
 		[JSInvokable]
 		public void NotifyMouseMove(MouseEvent eventArgs) => OnMouseMove?.Invoke(this, eventArgs);
 
 		public event MapEventHandler OnKeyPress;
+
 		[JSInvokable]
 		public void NotifyKeyPress(Event eventArgs) => OnKeyPress?.Invoke(this, eventArgs);
 
 		public event MapEventHandler OnKeyDown;
+
 		[JSInvokable]
 		public void NotifyKeyDown(Event eventArgs) => OnKeyDown?.Invoke(this, eventArgs);
 
 		public event MapEventHandler OnKeyUp;
+
 		[JSInvokable]
 		public void NotifyKeyUp(Event eventArgs) => OnKeyUp?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnPreClick;
+
 		[JSInvokable]
 		public void NotifyPreClick(MouseEvent eventArgs) => OnPreClick?.Invoke(this, eventArgs);
 
 		public event EventHandler<Exception> BackgroundExceptionOccurred;
+
 		private void NotifyBackgroundExceptionOccurred(Exception exception) =>
 			BackgroundExceptionOccurred?.Invoke(this, exception);
 
 		#endregion events
 
 		#region InteractiveLayerEvents
+
 		// Has the same events as InteractiveLayer, but it is not a layer. 
 		// Could place this code in its own class and make Layer inherit from that, but not every layer is interactive...
 		// Is there a way to not duplicate this code?
@@ -374,26 +398,32 @@ namespace BlazorLeaflet
 		public delegate void MouseEventHandler(Map sender, MouseEvent e);
 
 		public event MouseEventHandler OnClick;
+
 		[JSInvokable]
 		public void NotifyClick(MouseEvent eventArgs) => OnClick?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnDblClick;
+
 		[JSInvokable]
 		public void NotifyDblClick(MouseEvent eventArgs) => OnDblClick?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnMouseDown;
+
 		[JSInvokable]
 		public void NotifyMouseDown(MouseEvent eventArgs) => OnMouseDown?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnMouseUp;
+
 		[JSInvokable]
 		public void NotifyMouseUp(MouseEvent eventArgs) => OnMouseUp?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnMouseOver;
+
 		[JSInvokable]
 		public void NotifyMouseOver(MouseEvent eventArgs) => OnMouseOver?.Invoke(this, eventArgs);
 
 		public event MouseEventHandler OnMouseOut;
+
 		[JSInvokable]
 		public void NotifyMouseOut(MouseEvent eventArgs) => OnMouseOut?.Invoke(this, eventArgs);
 

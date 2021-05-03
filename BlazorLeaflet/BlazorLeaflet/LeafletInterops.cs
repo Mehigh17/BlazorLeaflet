@@ -75,6 +75,9 @@ namespace BlazorLeaflet
 				_ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
 			};
 
+		public static ValueTask OpenLayerPopup(IJSRuntime jsRuntime, string mapId, Marker marker)
+			=> jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.openLayerPopup", mapId, marker.Id);
+		
 		public static ValueTask FitBounds(IJSRuntime jsRuntime, string mapId, PointF corner1, PointF corner2, PointF? padding, float? maxZoom) =>
 			jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.fitBounds", mapId, corner1, corner2, padding, maxZoom);
 

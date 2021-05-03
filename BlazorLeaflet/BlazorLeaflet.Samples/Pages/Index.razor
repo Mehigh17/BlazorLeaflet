@@ -7,111 +7,125 @@
 <h1>Blazor Leaflet</h1>
 
 <div class="form-inline m-2">
-	<div class="form-group mb-2">
-		<label>Tell me more about </label>
-		<input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName" />
-	</div>
-	<button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
-	<button class="btn btn-primary mb-2" @onclick="ZoomMap">Zoom</button>
-	<button class="btn btn-primary mb-2" @onclick="PanToNY">Pan to New York</button>
-	<button class="btn btn-primary mb-2" @onclick="RemoveLayers">Remove Layers</button>
+    <div class="form-group mb-2">
+        <label>Tell me more about </label>
+        <input class="form-control ml-2 mr-2" placeholder="city name" @bind="CityName"/>
+    </div>
+    <button class="btn btn-primary mb-2" @onclick="FindCity">Search</button>
+    <button class="btn btn-primary mb-2" @onclick="ZoomMap">Zoom</button>
+    <button class="btn btn-primary mb-2" @onclick="PanToNY">Pan to New York</button>
+    <button class="btn btn-primary mb-2" @onclick="RemoveLayers">Remove Layers</button>
+    <button class="btn btn-primary mb-2" @onclick="OpenPopup">Open Popup</button>
 </div>
 
 <div style="height: 500px; width: 500px;">
-	<LeafletMap Map="_map" />
+    <LeafletMap Map="_map"/>
 </div>
 <tbody>
-	<tr><td>Map Bounds:</td><td>@_map.Bounds?.ToString()</td></tr>
-	<tr><td>Center:</td><td>@_map.Center.Lat , @_map.Center.Lng</td></tr>
-	<tr><td>Zoom:</td><td>@_map.Zoom</td></tr>
+<tr>
+    <td>Map Bounds:</td><td>@_map.Bounds?.ToString()</td>
+</tr>
+<tr>
+    <td>Center:</td><td>@_map.Center.Lat , @_map.Center.Lng</td>
+</tr>
+<tr>
+    <td>Zoom:</td><td>@_map.Zoom</td>
+</tr>
 </tbody>
 
 @code
-{ private Map _map;
+{
+    private Map _map;
 
-	private Circle _circle;
+    private Circle _circle;
 
-	protected override void OnInitialized()
-	{
-		_map = new Map(jsRuntime)
-		{
-			Center = _startAt,
-			Zoom = 4.8f
-		};
+    protected override void OnInitialized()
+    {
+        _map = new Map(jsRuntime)
+        {
+            Center = _startAt,
+            Zoom = 4.8f
+        };
 
-		_map.OnInitialized += async () =>
-		{
-			_map.AddLayer(new TileLayer
-			{
-				UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-				Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-			});
+        _map.OnInitialized += async () =>
+        {
+            _map.AddLayer(new TileLayer
+            {
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
 
-			_map.AddLayer(new Polygon
-			{
-				Shape = new[]
-				{ new[] { new PointF(37f, -109.05f), new PointF(41f, -109.03f), new PointF(41f, -102.05f), new PointF(37f, -102.04f) } },
-				Fill = true,
-				FillColor = Color.Blue,
-				Popup = new Popup
-				{
-					Content = "How are you doing,"
-				}
-			});
+            _map.AddLayer(new Polygon
+            {
+                Shape = new[]
+                {new[] {new PointF(37f, -109.05f), new PointF(41f, -109.03f), new PointF(41f, -102.05f), new PointF(37f, -102.04f)}},
+                Fill = true,
+                FillColor = Color.Blue,
+                Popup = new Popup
+                {
+                    Content = "How are you doing,"
+                }
+            });
 
-			_map.AddLayer(new Models.Rectangle
-			{
-				Shape = new RectangleF(10f, 0f, 5f, 1f)
-			});
+            _map.AddLayer(new Models.Rectangle
+            {
+                Shape = new RectangleF(10f, 0f, 5f, 1f)
+            });
 
-			_circle = new Circle
-			{
-				Position = new LatLng(10f, 5f),
-				Radius = 10f
-			};
-			_map.AddLayer(_circle);
-			var markers = new Marker[]
-			{
-				new Marker(54.32f, 10.12f) { Title = "Kiel" },
-				new Marker(54.35f, 10.2f) { Title = "Hamburg" }
-					};
+            _circle = new Circle
+            {
+                Position = new LatLng(10f, 5f),
+                Radius = 10f
+            };
+            _map.AddLayer(_circle);
+            var markers = new[]
+            {
+                new Marker(54.3446f, 9.670025f) {Title = "Kiel", Popup = new Popup{ Content = "Kiel"}},
+                new Marker(54.35f, 10.2f) { Title = "Hamburg", Popup = new Popup{ Content = "Hamburg"} }
+            };
 
-			foreach (var m in markers)
-				_map.AddLayer(m);
+            foreach (var m in markers)
+                _map.AddLayer(m);
 
-			await _map.FitBounds(markers);
+            await _map.FitBounds(markers);
+        };
+        _map.OnBoundsChanged += (s, e) => this.StateHasChanged();
+    }
 
-		};
-		_map.OnBoundsChanged += (s, e) => this.StateHasChanged();
-	}
-
-	private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
-	public string CityName { get; set; }
+    private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
+    public string CityName { get; set; }
 
 
-	private void FindCity()
-	{
-		_circle.Radius = 5000000f;
-		var city = cityService.FindCity(CityName);
-		if (city != null)
-		{
-			var marker = new CityMarker(city);
+    private void FindCity()
+    {
+        _circle.Radius = 5000000f;
+        var city = cityService.FindCity(CityName);
+        if (city != null)
+        {
+            var marker = new CityMarker(city);
 
-			_map.AddLayer(marker);
-		}
-	}
+            _map.AddLayer(marker);
+        }
+    }
 
-	private void ZoomMap()
-	{
-		_map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZoom: 5f);
-	}
+    private void ZoomMap()
+    {
+        _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZoom: 5f);
+    }
 
-	private void PanToNY()
-	{
-		_map.PanTo(new PointF(40.713185f, -74.0072333f), animate: true, duration: 10f);
-	}
+    private void PanToNY()
+    {
+        _map.PanTo(new PointF(40.713185f, -74.0072333f), animate: true, duration: 10f);
+    }
 
-	private void RemoveLayers()
-	{
-		_map.RemoveAllLayersOfType<Marker>();
-	} }
+    private void RemoveLayers()
+    {
+        _map.RemoveAllLayersOfType<Marker>();
+    }
+
+    private Task OpenPopup()
+    {
+        var marker = _map.GetLayers().OfType<Marker>().First();
+        return _map.OpenMarkerPopup(marker).AsTask();
+    }
+}

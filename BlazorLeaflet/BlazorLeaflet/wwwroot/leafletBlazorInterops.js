@@ -232,6 +232,10 @@ window.leafletBlazor = {
 		if (map.getZoom() > map.getMinZoom()) {
 			map.zoomOut(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
 		}
+	},
+	openLayerPopup: function (mapId, layerId){
+		let layer = layers[mapId].find(l => l.id === layerId);
+		layer.openPopup();
 	}
 };
 
@@ -354,6 +358,8 @@ function addPopup(layerObj, popup) {
 		closeOnEscapeKey: popup.closeOnEscapeKey,
 	});
 }
+
+
 
 function addLayer(mapId, layer, layerId) {
 	layer.id = layerId;
