@@ -221,6 +221,15 @@ window.leafletBlazor = {
         if (map.getZoom() > map.getMinZoom()) {
             map.zoomOut(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
         }
+    },
+    openPopupOnMap: function (mapId, mapPopupData) {
+        var pu = L.popup()
+            .setLatLng(mapPopupData.latLng)
+            .setContent(mapPopupData.content);
+        maps[mapId].openPopup(pu);
+    },
+    closePopupOnMap: function (mapId) {
+        maps[mapId].closePopup();
     }
 };
 
