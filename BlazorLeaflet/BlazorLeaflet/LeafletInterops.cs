@@ -91,5 +91,12 @@ namespace BlazorLeaflet
 
         public static ValueTask ZoomOut(IJSRuntime jsRuntime, string mapId, MouseEventArgs e) =>
             jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.zoomOut", mapId, e);
+
+        internal static ValueTask OpenPopupOnMap(IJSRuntime jsRuntime, string mapId, MapPopupData mapPopupData) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.openPopupOnMap", mapId, mapPopupData);
+        
+
+        internal static ValueTask ClosePopupOnMap(IJSRuntime jsRuntime, string mapId) =>
+            jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.closePopupOnMap", mapId);
     }
 }
