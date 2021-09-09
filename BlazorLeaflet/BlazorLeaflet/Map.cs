@@ -1,16 +1,16 @@
-using System;
-using BlazorLeaflet.Models;
-using BlazorLeaflet.Utils;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using Microsoft.JSInterop;
-using BlazorLeaflet.Models.Events;
-using System.Threading.Tasks;
-using System.Collections.Specialized;
 using BlazorLeaflet.Exceptions;
-using System.Collections.Generic;
-using System.Linq;
+using BlazorLeaflet.Models;
+using BlazorLeaflet.Models.Events;
+using BlazorLeaflet.Utils;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorLeaflet
 {
@@ -61,7 +61,7 @@ namespace BlazorLeaflet
 
         public string Id { get; }
 
-        private ObservableCollection<Layer> _layers = new ObservableCollection<Layer>();
+        private readonly ObservableCollection<Layer> _layers = new ObservableCollection<Layer>();
 
         private readonly IJSRuntime _jsRuntime;
 
@@ -69,10 +69,10 @@ namespace BlazorLeaflet
 
         public Map(IJSRuntime jsRuntime)
         {
-            _jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
+            this._jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
             Id = StringHelper.GetRandomString(10);
 
-            _layers.CollectionChanged += OnLayersChanged;
+            this._layers.CollectionChanged += OnLayersChanged;
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace BlazorLeaflet
         /// </summary>
         public void RaiseOnInitialized()
         {
-            _isInitialized = true;
+            this._isInitialized = true;
             OnInitialized?.Invoke();
         }
 
@@ -92,17 +92,8 @@ namespace BlazorLeaflet
         /// <exception cref="UninitializedMapException">Throws when the map has not been yet initialized.</exception>
         public void AddLayer(Layer layer)
         {
-            if (layer is null)
-            {
-                throw new ArgumentNullException(nameof(layer));
-            }
-
-            if (!_isInitialized)
-            {
-                throw new UninitializedMapException();
-            }
-
-            _layers.Add(layer);
+            CheckLayer(layer);
+            this._layers.Add(layer);
         }
 
         /// <summary>
@@ -113,26 +104,39 @@ namespace BlazorLeaflet
         /// <exception cref="UninitializedMapException">Throws when the map has not been yet initialized.</exception>
         public void RemoveLayer(Layer layer)
         {
-            if (layer is null)
-            {
-                throw new ArgumentNullException(nameof(layer));
-            }
+            CheckLayer(layer);
+            this._layers.Remove(layer);
+        }
 
-            if (!_isInitialized)
-            {
-                throw new UninitializedMapException();
-            }
+        public async Task AddLayerAsync(Layer layer)
+        {
+            CheckLayer(layer);
+            await LeafletInterops.AddLayer(this._jsRuntime, Id, layer);
+        }
 
-            _layers.Remove(layer);
+        public async Task RemoveLayerAsync(Layer layer)
+        {
+            CheckLayer(layer);
+            await LeafletInterops.RemoveLayer(this._jsRuntime, Id, layer.Id);
         }
 
         /// <summary>
         /// Get a read only collection of the current layers.
         /// </summary>
         /// <returns>A read only collection of layers.</returns>
-        public IReadOnlyCollection<Layer> GetLayers()
+        public IReadOnlyCollection<Layer> GetLayers() => this._layers.ToList().AsReadOnly();
+
+        private void CheckLayer(Layer layer)
         {
-            return _layers.ToList().AsReadOnly();
+            if (layer is null)
+            {
+                throw new ArgumentNullException(nameof(layer));
+            }
+
+            if (!this._isInitialized)
+            {
+                throw new UninitializedMapException();
+            }
         }
 
         private void OnLayersChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -142,7 +146,7 @@ namespace BlazorLeaflet
                 foreach (var item in args.NewItems)
                 {
                     var layer = item as Layer;
-                    LeafletInterops.AddLayer(_jsRuntime, Id, layer);
+                    LeafletInterops.AddLayer(this._jsRuntime, Id, layer);
                 }
             }
             else if (args.Action == NotifyCollectionChangedAction.Remove)
@@ -151,7 +155,7 @@ namespace BlazorLeaflet
                 {
                     if (item is Layer layer)
                     {
-                        LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+                        LeafletInterops.RemoveLayer(this._jsRuntime, Id, layer.Id);
                     }
                 }
             }
@@ -159,42 +163,40 @@ namespace BlazorLeaflet
                      || args.Action == NotifyCollectionChangedAction.Move)
             {
                 foreach (var oldItem in args.OldItems)
+                {
                     if (oldItem is Layer layer)
-                        LeafletInterops.RemoveLayer(_jsRuntime, Id, layer.Id);
+                        LeafletInterops.RemoveLayer(this._jsRuntime, Id, layer.Id);
+                }
 
                 foreach (var newItem in args.NewItems)
-                    LeafletInterops.AddLayer(_jsRuntime, Id, newItem as Layer);
+                {
+                    LeafletInterops.AddLayer(this._jsRuntime, Id, newItem as Layer);
+                }
             }
         }
 
-        public void FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null)
-        {
-            LeafletInterops.FitBounds(_jsRuntime, Id, corner1, corner2, padding, maxZoom);
-        }
+        public void FitBounds(PointF corner1, PointF corner2, PointF? padding = null, float? maxZoom = null) => LeafletInterops.FitBounds(this._jsRuntime, Id, corner1, corner2, padding, maxZoom);
 
-        public void PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false)
-        {
-            LeafletInterops.PanTo(_jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
-        }
+        public void PanTo(PointF position, bool animate = false, float duration = 0.25f, float easeLinearity = 0.25f, bool noMoveStart = false) => LeafletInterops.PanTo(this._jsRuntime, Id, position, animate, duration, easeLinearity, noMoveStart);
 
-        public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => 
-            await LeafletInterops.GetZoom(_jsRuntime, Id);
-        public async Task<LatLngBounds> GetBounds() => await LeafletInterops.GetBounds(_jsRuntime, Id);
+        public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(this._jsRuntime, Id);
+        public async Task<float> GetZoom() =>
+            await LeafletInterops.GetZoom(this._jsRuntime, Id);
+        public async Task<LatLngBounds> GetBounds() => await LeafletInterops.GetBounds(this._jsRuntime, Id);
 
         /// <summary>
         /// Increases the zoom level by one notch.
         /// 
         /// If <c>shift</c> is held down, increases it by three.
         /// </summary>
-        public async Task ZoomIn(MouseEventArgs e) => await LeafletInterops.ZoomIn(_jsRuntime, Id, e);
+        public async Task ZoomIn(MouseEventArgs e) => await LeafletInterops.ZoomIn(this._jsRuntime, Id, e);
 
         /// <summary>
         /// Decreases the zoom level by one notch.
         /// 
         /// If <c>shift</c> is held down, decreases it by three.
         /// </summary>
-        public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(_jsRuntime, Id, e);
+        public async Task ZoomOut(MouseEventArgs e) => await LeafletInterops.ZoomOut(this._jsRuntime, Id, e);
 
         #region events
 

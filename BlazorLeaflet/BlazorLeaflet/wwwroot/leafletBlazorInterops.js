@@ -78,6 +78,45 @@ window.leafletBlazor = {
         addLayer(mapId, mkr, marker.id);
         setTooltipAndPopupIfDefined(marker, mkr);
     },
+    addMarkerClusterLayer: function (mapId, markerClusterLayerConfig, markersObjectRefs) {
+        try {
+            const markersLayers = markerClusterLayerConfig.markersLayers.map((m, i) => {
+                var options = {
+                    ...createInteractiveLayer(m),
+                    keyboard: m.isKeyboardAccessible,
+                    title: m.title,
+                    alt: m.alt,
+                    zIndexOffset: m.zIndexOffset,
+                    opacity: m.opacity,
+                    riseOnHover: m.riseOnHover,
+                    riseOffset: m.riseOffset,
+                    pane: m.pane,
+                    bubblingMouseEvents: m.isBubblingMouseEvents,
+                    draggable: m.draggable,
+                    autoPan: m.useAutopan,
+                    autoPanPadding: m.autoPanPadding,
+                    autoPanSpeed: m.autoPanSpeed
+                };
+                if (m.icon !== null) {
+                    options.icon = createIcon(m.icon);
+                }
+                const marker = L.marker(m.position, { ...createInteractiveLayer(m), ...options });
+                connectMarkerEvents(marker, markersObjectRefs[i]);
+                setTooltipAndPopupIfDefined(m, marker);
+                return marker;
+            });
+
+            const markerClusterGroup = L.markerClusterGroup({
+                disableClusteringAtZoom: markerClusterLayerConfig.disableClusteringAtZoom
+            });
+
+            markerClusterGroup.addLayers(markersLayers, { chunkedLoading: true, chunkInterval: 100 });
+            addLayer(mapId, markerClusterGroup, markerClusterLayerConfig.id);
+
+        } catch (e) {
+            console.error('.addMarkerClusterLayer', e);
+        }
+    },
     addPolyline: function (mapId, polyline, objectReference) {
         const layer = L.polyline(shapeToLatLngArray(polyline.shape), createPolyline(polyline));
         addLayer(mapId, layer, polyline.id);

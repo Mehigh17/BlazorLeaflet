@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using Rectangle = BlazorLeaflet.Models.Rectangle;
 
@@ -36,6 +36,14 @@ namespace BlazorLeaflet
 
         public static ValueTask AddLayer(IJSRuntime jsRuntime, string mapId, Layer layer)
         {
+            if (layer is MarkerClusterLayer group)
+            {
+                var markersRefs = group.MarkersLayers
+                    .Select(x => CreateLayerReference(mapId, x))
+                    .ToArray();
+
+                return jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addMarkerClusterLayer", mapId, layer, markersRefs);
+            }
             return layer switch
             {
                 TileLayer tileLayer => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addTilelayer", mapId, tileLayer, CreateLayerReference(mapId, tileLayer)),
