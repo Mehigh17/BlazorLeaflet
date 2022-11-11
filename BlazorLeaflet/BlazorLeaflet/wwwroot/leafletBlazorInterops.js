@@ -145,6 +145,25 @@ window.leafletBlazor = {
 		const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
 		addLayer(mapId, imgLayer);
 	},
+	addImageRotatedLayer: function (mapId, image, objectReference) {
+		const layerOptions = {
+			...createInteractiveLayer(image),
+			opacity: image.opacity,
+			alt: image.alt,
+			crossOrigin: image.crossOrigin,
+			errorOverlayUrl: image.errorOverlayUrl,
+			zIndex: image.zIndex,
+			className: image.className
+		};
+
+		const corner1 = L.latLng(image.corner1.x, image.corner1.y);
+		const corner2 = L.latLng(image.corner2.x, image.corner2.y);
+		const corner3 = L.latLng(image.corner3.x, image.corner3.y);
+		
+
+		const imgLayer = L.imageOverlay.rotated(image.url, corner1, corner2, corner3, layerOptions);
+		addLayer(mapId, imgLayer);
+	},
 	addGeoJsonLayer: function (mapId, geodata, objectReference) {
 		const geoDataObject = JSON.parse(geodata.geoJsonData);
 		var options = {

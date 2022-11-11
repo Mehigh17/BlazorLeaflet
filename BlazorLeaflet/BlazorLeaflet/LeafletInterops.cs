@@ -47,6 +47,7 @@ namespace BlazorLeaflet
 				Circle circle => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addCircle", mapId, circle, CreateLayerReference(mapId, circle)),
 				Polygon polygon => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolygon", mapId, polygon, CreateLayerReference(mapId, polygon)),
 				Polyline polyline => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addPolyline", mapId, polyline, CreateLayerReference(mapId, polyline)),
+				ImageRotatedLayer imageRotated => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addImageRotatedLayer", mapId, imageRotated, CreateLayerReference(mapId, imageRotated)),
 				ImageLayer image => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addImageLayer", mapId, image, CreateLayerReference(mapId, image)),
 				GeoJsonDataLayer geo => jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.addGeoJsonLayer", mapId, geo, CreateLayerReference(mapId, geo)),
 				_ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
