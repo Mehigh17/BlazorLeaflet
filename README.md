@@ -28,10 +28,14 @@ Install the package in the target project:
 dotnet add package BlazorLeaflet
 ```
 
-In your `_Host.cshtml` (Blazor Server) or `index.html` (Blazor WebAssembly), reference the interoperability script in the `<head>` element like so:
+In your `_Host.cshtml`/`_Layout.cshtml` (Blazor Server) or `index.html` (Blazor WebAssembly), reference the interoperability script in the `<head>` element like so:
 
 ```html
-<script src="_content/BlazorLeaflet/leafletBlazorInterops.js"></script>
+<!-- BlazorLeaflet -->
+    <script src="_content/BlazorLeaflet/leaflet/leaflet.js"></script>
+    <script src="_content/BlazorLeaflet/leaflet/Leaflet.ImageOverlay.Rotated.js"></script>
+    <script src="_content/BlazorLeaflet/leafletBlazorInterops.js"></script>
+    <link rel="stylesheet" href="_content/BlazorLeaflet/leaflet/leaflet.css"/>
 ```
 
 You can now use the components and the rest of the library.
