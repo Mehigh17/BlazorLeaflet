@@ -125,7 +125,9 @@
 
     private Task OpenPopup()
     {
-        var marker = _map.GetLayers().OfType<Marker>().First();
+        var marker = _map.GetLayers().OfType<Marker>().FirstOrDefault();
+        if (marker is null)
+            return Task.CompletedTask;
         return _map.OpenMarkerPopup(marker).AsTask();
     }
 }
