@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-    <Version>0.4.5-alpha</Version>
+    <Version>0.4.6-alpha</Version>
     <Authors>Mihai Stan, Max Reble</Authors>
     <Company />
     <Description>BlazorLeaflet is a wrapper offering easy-to-use Blazor components that expose the Leaflet API in C#.</Description>
