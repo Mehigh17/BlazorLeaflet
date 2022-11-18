@@ -6,10 +6,10 @@ namespace BlazorLeaflet.Models
 	{
 		public PointF Corner3 { get; }
 
-		public ImageRotatedLayer(string url, PointF corner1, PointF corner2, PointF corner3)
-			: base(url, corner1, corner2)
+		public ImageRotatedLayer(string url, PointF topLeftCorner, PointF topRightCorner, PointF bottomLeftCorner)
+			: base(url, topLeftCorner, topRightCorner)
 		{
-			Corner3 = corner3;
+			this.Corner3 = bottomLeftCorner;
 		}
 	}
 }
