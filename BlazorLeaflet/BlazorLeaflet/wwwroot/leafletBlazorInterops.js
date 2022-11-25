@@ -143,7 +143,8 @@ window.leafletBlazor = {
 		const bounds = L.latLngBounds(corner1, corner2);
 
 		const imgLayer = L.imageOverlay(image.url, bounds, layerOptions);
-		addLayer(mapId, imgLayer);
+		connectInteractiveLayerEvents(imgLayer, objectReference);
+		addLayer(mapId, imgLayer, image.id);
 	},
 	addImageRotatedLayer: function (mapId, image, objectReference) {
 		const layerOptions = {
@@ -162,7 +163,8 @@ window.leafletBlazor = {
 		
 
 		const imgLayer = L.imageOverlay.rotated(image.url, corner1, corner2, corner3, layerOptions);
-		addLayer(mapId, imgLayer);
+		connectInteractiveLayerEvents(imgLayer, objectReference);
+		addLayer(mapId, imgLayer, image.id);
 	},
 	addGeoJsonLayer: function (mapId, geodata, objectReference) {
 		const geoDataObject = JSON.parse(geodata.geoJsonData);

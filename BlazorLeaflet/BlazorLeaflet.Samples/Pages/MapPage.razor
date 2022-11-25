@@ -1,0 +1,14 @@
+@page "/interactive"
+<h3>MapPage</h3>
+
+<input type="checkbox" id="interactive" @bind="@_imgLayer.IsInteractive" @onclick="ToggleInteractive"/>
+<label for="interactive">Interaktiv</label>
+
+<PageTitle>Index</PageTitle>
+
+@if (Map != null)
+{
+    <div id="mapContainer" style="width: 100%; height: 500px;">
+        <LeafletMap Map="Map"/>
+    </div>
+}
