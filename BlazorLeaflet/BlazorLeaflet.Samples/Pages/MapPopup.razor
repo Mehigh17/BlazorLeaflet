@@ -1,0 +1,60 @@
+﻿@page "/MapPopup"
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Map Popup</h1>
+
+<div class="form-inline m-2">
+    <div class="form-group mb-2">
+        <label>Enter desired popup content, then click on the map. </label>
+        <input class="form-control ml-2 mr-2" placeholder="This will be displayed" @bind="Content" />
+    </div>
+    <button class="btn btn-primary mb-2" @onclick="ClosePopup">Close any popup</button>
+</div>
+
+<div style="height: 500px; width: 500px;">
+    <LeafletMap Map="_map" />
+</div>
+
+@code
+{
+
+    private Map _map;
+
+    private Circle _circle;
+
+    protected override void OnInitialized()
+    {
+        _map = new Map(jsRuntime)
+        {
+            Center = _startAt,
+            Zoom = 4.8f
+        };
+
+        _map.OnInitialized += () =>
+        {
+            _map.AddLayer(new TileLayer
+            {
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
+        };
+        _map.OnClick += AddMapPopup;
+    }
+
+    private LatLng _startAt = new LatLng(47.5574007f, 16.3918687f);
+    public string Content { get; set; }
+
+    private async void AddMapPopup(Map sender, MouseEvent e)
+    {
+        var mapPopupData = new MapPopupData() { Content = Content, LatLng = e.LatLng };
+        await _map.OpenMapPopup(mapPopupData);
+    }
+
+    private async void ClosePopup()
+    {
+        await _map.CloseMapPopup();
+    }
+
+}
