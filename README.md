@@ -87,3 +87,6 @@ _map.FitBounds(new PointF(45.943f, 24.967f), new PointF(46.943f, 25.967f), maxZo
 # Contribute
 
 The `master` branch is used as the development branch. If you are looking for a specific release, check the tags. If you are willing to contribute, fork this repository, and create your own branch from master, preferably give it a meaningful name, regarding your change or the issue that you are targeting. For large modifications, create an issue before, and a WIP pull request. Always rebase before review requests.
+# Rendering requirements
+
+BlazorLeaflet uses some ECMA 6 operators (spread) and therefore rendering requires compatible browser such as: EDGE v. ≥79, Chrome v. ≥63, Firefox v. ≥67, Safari v. ≥11 and so forth.
