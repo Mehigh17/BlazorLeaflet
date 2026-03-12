@@ -1,4 +1,4 @@
-﻿maps = {};
+maps = {};
 layers = {};
 
 window.leafletBlazor = {
@@ -221,6 +221,12 @@ window.leafletBlazor = {
         if (map.getZoom() > map.getMinZoom()) {
             map.zoomOut(map.options.zoomDelta * (e.shiftKey ? 3 : 1));
         }
+    },
+    getBounds: function (mapId) {
+        return maps[mapId].getBounds();
+    },
+    setZoom: function (mapId, zoomLevel) {
+        maps[mapId].setZoom(zoomLevel);
     }
 };
 
