@@ -26,6 +26,12 @@ namespace BlazorLeaflet
         /// </summary>
         public float Zoom { get; set; }
 
+
+        /// <summary>
+        /// Map bounds
+        /// </summary>
+        public Bounds Bounds { get; private set; }
+
         /// <summary>
         /// Minimum zoom level of the map. If not specified and at least one 
         /// GridLayer or TileLayer is in the map, the lowest of their minZoom
@@ -82,6 +88,19 @@ namespace BlazorLeaflet
         {
             _isInitialized = true;
             OnInitialized?.Invoke();
+            RunTaskInBackground(UpdateBounds);
+        }
+
+        private async void RunTaskInBackground(Func<Task> task)
+        {
+            try
+            {
+                await task();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
+            }
         }
 
         /// <summary>
@@ -178,8 +197,15 @@ namespace BlazorLeaflet
         }
 
         public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => 
-            await LeafletInterops.GetZoom(_jsRuntime, Id);
+        public async Task<float> GetZoom() => await LeafletInterops.GetZoom(_jsRuntime, Id);
+        public async Task<Bounds> GetBounds() => await LeafletInterops.GetBounds(_jsRuntime, Id);
+
+
+        private async Task UpdateBounds()
+        {
+            Bounds = await GetBounds();
+            OnBoundsChanged?.Invoke(this, new EventArgs());
+        }
 
         /// <summary>
         /// Increases the zoom level by one notch.
@@ -238,11 +264,41 @@ namespace BlazorLeaflet
 
         public event MapEventHandler OnZoomEnd;
         [JSInvokable]
-        public void NotifyZoomEnd(Event e) => OnZoomEnd?.Invoke(this, e);
+        public async void NotifyZoomEnd(Event e)
+        {
+            try
+            {
+                await UpdateBounds();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
+            }
+            finally
+            {
+                OnZoomEnd?.Invoke(this, e);
+            }
+        }
 
         public event MapEventHandler OnMoveEnd;
         [JSInvokable]
-        public void NotifyMoveEnd(Event e) => OnMoveEnd?.Invoke(this, e);
+        public async void NotifyMoveEnd(Event e)
+        {
+            try
+            {
+                await UpdateBounds();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
+            }
+            finally
+            {
+                OnMoveEnd?.Invoke(this, e);
+            }
+        }
+
+        public event EventHandler OnBoundsChanged;
 
         public event MouseEventHandler OnMouseMove;
         [JSInvokable]
@@ -263,6 +319,10 @@ namespace BlazorLeaflet
         public event MouseEventHandler OnPreClick;
         [JSInvokable]
         public void NotifyPreClick(MouseEvent eventArgs) => OnPreClick?.Invoke(this, eventArgs);
+
+        public event EventHandler<Exception> BackgroundExceptionOccurred;
+        private void NotifyBackgroundExceptionOccurred(Exception exception) =>
+            BackgroundExceptionOccurred?.Invoke(this, exception);
 
         #endregion events
 

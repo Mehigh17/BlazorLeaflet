@@ -1,4 +1,4 @@
-﻿maps = {};
+maps = {};
 layers = {};
 
 window.leafletBlazor = {
@@ -207,6 +207,9 @@ window.leafletBlazor = {
     },
     getZoom: function (mapId) {
         return maps[mapId].getZoom();
+    },
+    getBounds: function (mapId) {
+        return maps[mapId].getBounds();
     },
     zoomIn: function (mapId, e) {
         const map = maps[mapId];
