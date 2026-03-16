@@ -15,15 +15,25 @@ namespace BlazorLeaflet.Models
         /// </summary>
         public string RetinalUrl { get; set; }
 
-        /// <summary>
-        /// Size of the icon image in pixels.
-        /// </summary>
-        public Size? Size { get; set; }
+        public bool HasSize { get; set; }
 
         /// <summary>
-        /// The coordinates of the "tip" of the icon (relative to its top left corner). The icon will be aligned so that this point is at the marker's geographical location. Centered by default if size is specified, also can be set in CSS with negative margins.
+        /// <para>Size of the icon image in pixels.</para>
+        /// 
+        /// <para>To use, set <see cref="HasSize"/> to <see cref="true"/>.</para>
         /// </summary>
-        public Point? Anchor { get; set; }
+        public Size Size { get; set; }
+
+        public bool HasAnchor { get; set; }
+
+        /// <summary>
+        /// <para>The coordinates of the "tip" of the icon (relative to its top left corner). The icon will be aligned
+        /// so that this point is at the marker's geographical location. Centered by default if size is specified, also
+        /// can be set in CSS with negative margins.</para>
+        /// 
+        /// <para>To use, set <see cref="HasAnchor"/> to <see cref="true"/>.</para>
+        /// </summary>
+        public Point Anchor { get; set; }
 
         /// <summary>
         /// The coordinates of the point from which popups will "open", relative to the icon anchor.
