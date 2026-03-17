@@ -34,6 +34,7 @@ window.leafletBlazor = {
             errorTileUrl: tileLayer.errorTileUrl,
             zoomOffset: tileLayer.zoomOffset,
             // TMS
+            tms: tileLayer.tms,
             zoomReverse: tileLayer.isZoomReversed,
             detectRetina: tileLayer.detectRetina,
             // crossOrigin

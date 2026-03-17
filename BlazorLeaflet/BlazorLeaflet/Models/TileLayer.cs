@@ -29,6 +29,11 @@
         public string ErrorTileUrl { get; set; }
 
         /// <summary>
+        /// If true, inverses Y axis numbering for tiles (turn this on for TMS services).
+        /// </summary>
+        public bool Tms { get; set; }
+
+        /// <summary>
         /// If set to true, the zoom number used in tile URLs will be reversed (maxZoom - zoom instead of zoom)
         /// </summary>
         public bool IsZoomReversed { get; set; }
